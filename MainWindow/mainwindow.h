@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "gasket.h"
+#include "Graphics/gasket.h"
 
 #include <QGraphicsScene>
 #include <QMainWindow>
@@ -25,10 +25,10 @@ protected:
     void resizeEvent(QResizeEvent* event) override;
 
 private:
-    Ui::MainWindow *_ui;
-    QGraphicsScene *_scene;
-    QChart *_chart;
-    Gasket *_gasket;
+    Ui::MainWindow *ui_;
+    QGraphicsScene *scene_;
+    QChart *chart_;
+    Gasket *gasket_;
 };
 
 #endif // MAINWINDOW_H

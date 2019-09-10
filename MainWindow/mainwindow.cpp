@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+#include "MainWindow/mainwindow.h"
 #include "ui_mainwindow.h"
 
 #include <QChartView>
@@ -6,40 +6,52 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    _ui(new Ui::MainWindow)
+    ui_(new Ui::MainWindow)
 {
-    _ui->setupUi(this);
+    ui_->setupUi(this);
 
-    _chart = new QChart();
-    _chart->setTitle("Simple areachart example");
-    _chart->addSeries(new QLineSeries(new QLineSeries()));
-    _chart->createDefaultAxes();
-    _chart->axisX()->setRange(0, 100);
-    _chart->axisY()->setRange(0, 100);
+    chart_ = new QChart();
+    chart_->setTitle("Городецкий Николай - Вариант №3");
+    chart_->addSeries(new QLineSeries(new QLineSeries()));
+    chart_->createDefaultAxes();
+
+    QValueAxis *axisX = new QValueAxis(chart_);
+    axisX->setRange(0, 100);
+    axisX->setTickCount(11);
+    axisX->setLabelFormat("%.1f");
+
+    QValueAxis *axisY = new QValueAxis(chart_);
+    axisY->setRange(0, 100);
+    axisY->setTickCount(11);
+    axisY->setLabelFormat("%.1f");
+
+    chart_->setAxisX(axisX);
+    chart_->setAxisY(axisY);
 
 
-    _ui->chartView->setRenderHint(QPainter::Antialiasing);
-    _ui->chartView->setChart(_chart);
-    _scene = _ui->chartView->scene();
-
-//    _scene = new QGraphicsScene(this);
-//    _ui->graphicsView->setScene(_scene);
+    ui_->chartView->setRenderHint(QPainter::Antialiasing);
+    ui_->chartView->setChart(chart_);
+    scene_ = ui_->chartView->scene();
 
     // create our Gasket object and add it to the scene
+    gasket_ = new Gasket(chart_);
 
-    _gasket = new Gasket();
-    _scene->addItem(_gasket);
+    connect(ui_->spinBox, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setWidth(value); });
+    connect(ui_->spinBox_2, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setHeight(value); });
+    connect(ui_->spinBox_5, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setArc13R(value); });
+    connect(ui_->spinBox_6, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setArc8R(value); });
+    connect(ui_->spinBox_3, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setArc11R(value); });
+
+    scene_->addItem(gasket_);
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event)
 {
-   //QMainWindow::resizeEvent(event);
-
-   resize(event->size().height() + 50, event->size().height());
+   QMainWindow::resizeEvent(event);
 }
 
 MainWindow::~MainWindow()
 {
-    delete _gasket;
-    delete _ui;
+    delete ui_;
+    delete gasket_;
 }

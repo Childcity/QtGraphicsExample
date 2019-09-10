@@ -11,16 +11,20 @@ OBJECTS_DIR = obj/
 MOC_DIR     = moc/
 UI_DIR      = ui/
 
-INCLUDEPATH += MainWindow
-
 SOURCES += \
         main.cpp \
-    MainWindow/mainwindow.cpp \
-    MainWindow/gasket.cpp
+	MainWindow/mainwindow.cpp \
+    Graphics/gasket.cpp \
+	Graphics/figure.cpp \
+	Graphics/circle.cpp \
+    Graphics/arc.cpp
 
 HEADERS += \
-    MainWindow/mainwindow.h \
-    MainWindow/gasket.h
+	MainWindow/mainwindow.h \
+    Graphics/gasket.h \
+	Graphics/figure.h \
+	Graphics/circle.h \
+    Graphics/arc.h
 
 FORMS += \
     MainWindow/mainwindow.ui
