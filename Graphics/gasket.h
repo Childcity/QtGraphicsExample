@@ -8,11 +8,16 @@ using namespace QtCharts;
 
 class Gasket : public QGraphicsItem {
 private:
-    const double k = 4.65;
+    constexpr static double k = 4.65;
+    constexpr static int fontSize = 12;
+    constexpr static double textDistance = 2 * k;
+
     QChart *chart_;
 
-    double width_ = 55;
+    bool isPointsNamesVisible_ = false;
     double height_ = 50;
+    double AB_GH_ = 55;
+    double CF_ = 20;
     double arc8R_ = 10;
     double arc13R_ = 10;
     double arc11R_ = 13;
@@ -25,7 +30,7 @@ public:
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
-    void setWidth(double value);
+    void setABGH(double value);
 
     void setHeight(double value);
 
@@ -36,6 +41,13 @@ public:
     void setArc13R(double value);
 
     void setArc11R(double arc11R);
+
+    void setPointsNamesVisible(bool isPointsNamesVisible);
+
+    void setCF(double CF);
+
+private:
+    void drawPointsNames(QPainter *painter, const QVector<QLineF> &lines);
 };
 
 #endif // GASKET_H

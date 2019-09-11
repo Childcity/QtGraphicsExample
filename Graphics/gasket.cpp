@@ -6,9 +6,9 @@
 #include <QWidget>
 #include <QDebug>
 
-void Gasket::setWidth(double value)
+void Gasket::setABGH(double value)
 {
-    width_ = value;
+    AB_GH_ = value;
     redraw();
 }
 
@@ -41,6 +41,18 @@ void Gasket::setArc11R(double arc11R)
     redraw();
 }
 
+void Gasket::setPointsNamesVisible(bool isPointsNamesVisible)
+{
+    isPointsNamesVisible_ = isPointsNamesVisible;
+    redraw();
+}
+
+void Gasket::setCF(double CF)
+{
+    CF_ = CF;
+    redraw();
+}
+
 Gasket::Gasket(QChart *chart)
     : chart_(chart)
 {}
@@ -49,7 +61,7 @@ QRectF Gasket::boundingRect() const
 {
     // outer most edges
     QPointF bootomLeft = chart_->plotArea().bottomLeft();
-    return QRectF(bootomLeft.x(), bootomLeft.y() - height_*k, width_*k, height_*k);
+    return QRectF(bootomLeft.x(), bootomLeft.y() - height_*k, AB_GH_*k, 50*k);
 }
 
 void Gasket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -59,64 +71,59 @@ void Gasket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 
     QRectF rect = boundingRect();
 
-    // draw rectangle
-    QPen pen(Qt::black, 1);
-    painter->setPen(pen);
-    painter->drawRect(rect);
-
     //############### creating detail lines #################
 
     QPointF stP = rect.topLeft();
     QPointF t; //tmp point
 
 
-    QLineF l1(10*k, 0, width_*k, 0);
-    QLineF l2(l1.p2(), QPointF(l1.p2().x(), l1.p2().y() + 15*k));
+    QLineF lAB(10*k, 0, AB_GH_*k, 0);
+    QLineF lBC(lAB.p2(), QPointF(lAB.p2().x(), lAB.p2().y() + ((50-CF_)/2)*k));
 
 
-    t.rx() = l1.p2().x() - 14*k;
-    t.ry() = l1.p2().y() + 10.4*k;
-    QLineF l3(l2.p2(), t);
-    QLineF l4(t, QPointF(t.x(), t.y() + 30*k));
+    t.rx() = lAB.p2().x() - 14*k;
+    t.ry() = lAB.p2().y() + 10.4*k;
+    QLineF lCD(lBC.p2(), t);
+    QLineF lDE(t, QPointF(t.x(), t.y() + 30*k));
 
 
-    QLineF l5(l4.p2(), QPointF(l2.p2().x(), l2.p2().y() + 20*k));
-    QLineF l6(l5.p2(), QPointF(l5.p2().x(), l5.p2().y() + 15*k));
-    QLineF l7(l6.p2(), QPointF(l6.p2().x() - (width_-10)*k, l6.p2().y()));
+    QLineF lEF(lDE.p2(), QPointF(lBC.p2().x(), lBC.p2().y() + 20*k));
+    QLineF lFG(lEF.p2(), QPointF(lEF.p2().x(), lEF.p2().y() + 15*k));
+    QLineF lGH(lFG.p2(), QPointF(lFG.p2().x() - (AB_GH_-10)*k, lFG.p2().y()));
 
 
-    t.rx() = l7.translated(stP).p2().x() - 10*k;
-    t.ry() = l7.translated(stP).p2().y() - 10*k;
+    t.rx() = lGH.translated(stP).p2().x() - 10*k;
+    t.ry() = lGH.translated(stP).p2().y() - 10*k;
     Arc arc(M_PI/2., M_PI, arc8R_*k, QPointF(t.x() + 10*k, t.y()));
     QVector<QPointF> arc8 = arc.getPoints();
 
 
-    t.rx() = l7.p2().x() - 10*k;
-    t.ry() = l7.p2().y() - 10*k;
-    QLineF l9(t, QPointF(t.x(), t.y() - 7.5*k));
-    QLineF l10(l9.p2(), QPointF(l9.p2().x() + ((((6*k)))), l9.p2().y()));
+    t.rx() = lGH.p2().x() - 10*k;
+    t.ry() = lGH.p2().y() - 10*k;
+    QLineF lIJ(t, QPointF(t.x(), t.y() - 7.5*k));
+    QLineF lJK(lIJ.p2(), QPointF(lIJ.p2().x() + ((((6*k)))), lIJ.p2().y()));
 
 
-    t.rx() = l9.translated(stP).p2().x() + 17*k;
-    t.ry() = l9.translated(stP).p2().y() - 7.5*k;
+    t.rx() = lIJ.translated(stP).p2().x() + 17*k;
+    t.ry() = lIJ.translated(stP).p2().y() - 7.5*k;
     arc = Arc (-M_PI/1.26, M_PI/1.23, arc11R_*k, t);
     QVector<QPointF> arc11 = arc.getPoints();
 
 
-    t.rx() = l9.p2().x();
-    t.ry() = l9.p2().y() - 15*k;
-    QLineF l12(t, QPointF(t.x(), t.y() - 7.5*k));
-    QLineF l11(l12.p1(), QPointF(l12.p1().x() + ((((6*k)))), l12.p1().y()));
+    t.rx() = lIJ.p2().x();
+    t.ry() = lIJ.p2().y() - 15*k;
+    QLineF lMN(t, QPointF(t.x(), t.y() - 7.5*k));
+    QLineF lLM(lMN.p1(), QPointF(lMN.p1().x() + ((((6*k)))), lMN.p1().y()));
 
 
-    t.rx() = l12.translated(stP).p2().x() + 10*k;
-    t.ry() = l12.translated(stP).p2().y();
+    t.rx() = lMN.translated(stP).p2().x() + 10*k;
+    t.ry() = lMN.translated(stP).p2().y();
     arc = Arc (-M_PI, -M_PI/2., arc13R_*k, t);
     QVector<QPointF> arc13 = arc.getPoints();
 
 
     QVector<QLineF> lines({
-                            l1, l2, l3, l4, l5, l6, l7, l9, l10, l11, l12
+                            lAB, lBC, lCD, lDE, lEF, lFG, lGH, lIJ, lJK, lLM, lMN
                          });
 
     for(auto &line : lines){
@@ -125,12 +132,83 @@ void Gasket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     }
 
 
-    // painting
-    pen.setColor(Qt::red);
-    pen.setWidth(3);
-    painter->setPen(pen);
+    //############### drawing detail lines #################
+
+    // draw rectangle
+    painter->setPen({Qt::black, 1});
+    painter->drawRect(rect);
+
+    // painting lines
+    painter->setPen({Qt::red, 3});
     painter->drawLines(lines);
     painter->drawLines(arc8.data(), arc8.size()/2);
     painter->drawLines(arc11.data(), arc11.size()/2);
     painter->drawLines(arc13.data(), arc13.size()/2);
+
+    // painting text
+    if(isPointsNamesVisible_)
+        drawPointsNames(painter, lines);
+}
+
+void Gasket::drawPointsNames(QPainter *painter, const QVector<QLineF> &lines)
+{
+    QPointF txtP;
+    painter->setPen({Qt::black, 1});
+    painter->setFont(QFont("", fontSize, 1));
+
+    txtP.rx() = lines[0].p1().x();
+    txtP.ry() = lines[0].p1().y() - textDistance;
+    painter->drawText(txtP, "A");
+
+    txtP.rx() = lines[0].p2().x();
+    txtP.ry() = lines[0].p2().y() - textDistance;
+    painter->drawText(txtP, "B");
+
+    txtP.rx() = lines[1].p2().x() + textDistance;
+    txtP.ry() = lines[1].p2().y();
+    painter->drawText(txtP, "C");
+
+    txtP.rx() = lines[2].p2().x() - textDistance * 2;
+    txtP.ry() = lines[2].p2().y();
+    painter->drawText(txtP, "D");
+
+    txtP.rx() = lines[3].p2().x() - textDistance * 2;
+    txtP.ry() = lines[3].p2().y();
+    painter->drawText(txtP, "E");
+
+    txtP.rx() = lines[4].p2().x() + textDistance;
+    txtP.ry() = lines[4].p2().y();
+    painter->drawText(txtP, "F");
+
+    txtP.rx() = lines[5].p2().x() + textDistance;
+    txtP.ry() = lines[5].p2().y();
+    painter->drawText(txtP, "G");
+
+    txtP.rx() = lines[6].p2().x();
+    txtP.ry() = lines[6].p2().y() - textDistance;
+    painter->drawText(txtP, "H");
+
+    txtP.rx() = lines[7].p1().x() + textDistance;
+    txtP.ry() = lines[7].p1().y();
+    painter->drawText(txtP, "I");
+
+    txtP.rx() = lines[7].p2().x() + textDistance;
+    txtP.ry() = lines[7].p2().y() - textDistance;
+    painter->drawText(txtP, "J");
+
+    txtP.rx() = lines[8].p2().x() + textDistance;
+    txtP.ry() = lines[8].p2().y() - textDistance;
+    painter->drawText(txtP, "K");
+
+    txtP.rx() = lines[9].p2().x() + textDistance;
+    txtP.ry() = lines[9].p2().y() + textDistance * 2;
+    painter->drawText(txtP, "L");
+
+    txtP.rx() = lines[9].p1().x() + textDistance;
+    txtP.ry() = lines[9].p1().y() + textDistance * 2;
+    painter->drawText(txtP, "M");
+
+    txtP.rx() = lines[10].p2().x() + textDistance;
+    txtP.ry() = lines[10].p2().y();
+    painter->drawText(txtP, "N");
 }

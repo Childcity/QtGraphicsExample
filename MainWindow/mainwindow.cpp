@@ -14,15 +14,20 @@ MainWindow::MainWindow(QWidget *parent) :
     chart_->setTitle("Городецкий Николай - Вариант №3");
     chart_->addSeries(new QLineSeries(new QLineSeries()));
     chart_->createDefaultAxes();
+    chart_->legend()->setVisible(false);
 
     QValueAxis *axisX = new QValueAxis(chart_);
     axisX->setRange(0, 100);
     axisX->setTickCount(11);
+    axisX->setMinorTickCount(1);
+    axisX->setTitleText("X ---->");
     axisX->setLabelFormat("%.1f");
 
     QValueAxis *axisY = new QValueAxis(chart_);
     axisY->setRange(0, 100);
     axisY->setTickCount(11);
+    axisY->setMinorTickCount(1);
+    axisY->setTitleText("Y ---->");
     axisY->setLabelFormat("%.1f");
 
     chart_->setAxisX(axisX);
@@ -36,11 +41,13 @@ MainWindow::MainWindow(QWidget *parent) :
     // create our Gasket object and add it to the scene
     gasket_ = new Gasket(chart_);
 
-    connect(ui_->spinBox, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setWidth(value); });
+    connect(ui_->checkBox, &QCheckBox::clicked, [=](bool value){ gasket_->setPointsNamesVisible(value); });
+    connect(ui_->spinBox, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setABGH(value); });
     connect(ui_->spinBox_2, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setHeight(value); });
     connect(ui_->spinBox_5, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setArc13R(value); });
     connect(ui_->spinBox_6, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setArc8R(value); });
     connect(ui_->spinBox_3, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setArc11R(value); });
+    connect(ui_->spinBox_4, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setCF(value); });
 
     scene_->addItem(gasket_);
 }
