@@ -14,10 +14,12 @@ private:
 
     QChart *chart_;
 
-    bool isPointsNamesVisible_ = false;
+    bool isPointsNamesVisible_ = true;
     double height_ = 50;
     double AB_GH_ = 55;
     double CF_ = 20;
+    double DE_ = 30;
+    double PB_ = 14;
     double arc8R_ = 10;
     double arc13R_ = 10;
     double arc11R_ = 13;
@@ -45,6 +47,10 @@ public:
     void setPointsNamesVisible(bool isPointsNamesVisible);
 
     void setCF(double CF);
+
+    void setDE(double DE);
+
+    void setPB(double BP);
 
 private:
     void drawPointsNames(QPainter *painter, const QVector<QLineF> &lines);

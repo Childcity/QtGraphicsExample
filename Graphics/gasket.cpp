@@ -53,6 +53,18 @@ void Gasket::setCF(double CF)
     redraw();
 }
 
+void Gasket::setDE(double DE)
+{
+    DE_ = DE;
+    redraw();
+}
+
+void Gasket::setPB(double BP)
+{
+    PB_ = BP;
+    redraw();
+}
+
 Gasket::Gasket(QChart *chart)
     : chart_(chart)
 {}
@@ -81,14 +93,14 @@ void Gasket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     QLineF lBC(lAB.p2(), QPointF(lAB.p2().x(), lAB.p2().y() + ((50-CF_)/2)*k));
 
 
-    t.rx() = lAB.p2().x() - 14*k;
-    t.ry() = lAB.p2().y() + 10.4*k;
+    t.rx() = lAB.p2().x() - PB_*k;
+    t.ry() = lAB.p2().y() + (50./2. - DE_/2.)*k;
     QLineF lCD(lBC.p2(), t);
-    QLineF lDE(t, QPointF(t.x(), t.y() + 30*k));
+    QLineF lDE(t, QPointF(t.x(), t.y() + DE_*k));
 
 
-    QLineF lEF(lDE.p2(), QPointF(lBC.p2().x(), lBC.p2().y() + 20*k));
-    QLineF lFG(lEF.p2(), QPointF(lEF.p2().x(), lEF.p2().y() + 15*k));
+    QLineF lEF(lDE.p2(), QPointF(lBC.p2().x(), lAB.p2().y() + (50 - ((50-CF_)/2))*k));
+    QLineF lFG(lEF.p2(), QPointF(lEF.p2().x(), lAB.p2().y() + 50*k));
     QLineF lGH(lFG.p2(), QPointF(lFG.p2().x() - (AB_GH_-10)*k, lFG.p2().y()));
 
 
@@ -136,7 +148,7 @@ void Gasket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 
     // draw rectangle
     painter->setPen({Qt::black, 1});
-    painter->drawRect(rect);
+    //painter->drawRect(rect);
 
     // painting lines
     painter->setPen({Qt::red, 3});
@@ -159,6 +171,10 @@ void Gasket::drawPointsNames(QPainter *painter, const QVector<QLineF> &lines)
     txtP.rx() = lines[0].p1().x();
     txtP.ry() = lines[0].p1().y() - textDistance;
     painter->drawText(txtP, "A");
+
+    txtP.rx() = lines[0].p2().x() - PB_*k;
+    txtP.ry() = lines[0].p2().y() - textDistance;
+    painter->drawText(txtP, "P");
 
     txtP.rx() = lines[0].p2().x();
     txtP.ry() = lines[0].p2().y() - textDistance;

@@ -76,6 +76,9 @@
           <property name="text">
            <string>Draw Point Name</string>
           </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
         <item>
@@ -193,6 +196,46 @@
          </layout>
         </item>
         <item>
+         <widget class="QLabel" name="label_8">
+          <property name="text">
+           <string>PB</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_9">
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QSlider" name="horizontalSlider_8">
+            <property name="minimum">
+             <number>-99</number>
+            </property>
+            <property name="value">
+             <number>14</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="spinBox_8">
+            <property name="minimum">
+             <number>-99</number>
+            </property>
+            <property name="value">
+             <number>14</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
          <widget class="QLabel" name="label_6">
           <property name="text">
            <string>CF</string>
@@ -209,6 +252,9 @@
           </property>
           <item>
            <widget class="QSlider" name="horizontalSlider_5">
+            <property name="minimum">
+             <number>-99</number>
+            </property>
             <property name="value">
              <number>15</number>
             </property>
@@ -219,8 +265,51 @@
           </item>
           <item>
            <widget class="QSpinBox" name="spinBox_4">
+            <property name="minimum">
+             <number>-99</number>
+            </property>
             <property name="value">
              <number>15</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_7">
+          <property name="text">
+           <string>DE</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_8">
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QSlider" name="horizontalSlider_7">
+            <property name="minimum">
+             <number>-99</number>
+            </property>
+            <property name="value">
+             <number>30</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="spinBox_7">
+            <property name="minimum">
+             <number>-99</number>
+            </property>
+            <property name="value">
+             <number>30</number>
             </property>
            </widget>
           </item>
@@ -604,6 +693,70 @@
     <hint type="destinationlabel">
      <x>812</x>
      <y>126</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_7</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox_7</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>695</x>
+     <y>285</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>813</x>
+     <y>285</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox_7</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>horizontalSlider_7</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>813</x>
+     <y>285</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>695</x>
+     <y>285</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_8</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox_8</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>693</x>
+     <y>228</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>811</x>
+     <y>228</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox_8</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>horizontalSlider_8</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>811</x>
+     <y>228</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>693</x>
+     <y>228</y>
     </hint>
    </hints>
   </connection>

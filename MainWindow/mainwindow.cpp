@@ -20,14 +20,14 @@ MainWindow::MainWindow(QWidget *parent) :
     axisX->setRange(0, 100);
     axisX->setTickCount(11);
     axisX->setMinorTickCount(1);
-    axisX->setTitleText("X ---->");
+    axisX->setTitleText("X ----> mm");
     axisX->setLabelFormat("%.1f");
 
     QValueAxis *axisY = new QValueAxis(chart_);
     axisY->setRange(0, 100);
     axisY->setTickCount(11);
     axisY->setMinorTickCount(1);
-    axisY->setTitleText("Y ---->");
+    axisY->setTitleText("Y ----> mm");
     axisY->setLabelFormat("%.1f");
 
     chart_->setAxisX(axisX);
@@ -48,6 +48,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui_->spinBox_6, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setArc8R(value); });
     connect(ui_->spinBox_3, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setArc11R(value); });
     connect(ui_->spinBox_4, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setCF(value); });
+    connect(ui_->spinBox_7, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setDE(value); });
+    connect(ui_->spinBox_8, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setPB(value); });
 
     scene_->addItem(gasket_);
 }
