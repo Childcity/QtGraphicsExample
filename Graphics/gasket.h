@@ -8,7 +8,7 @@ using namespace QtCharts;
 
 class Gasket : public QGraphicsItem {
 private:
-    constexpr static double k = 4.65;
+    constexpr static double k = 5.65;
     constexpr static int fontSize = 12;
     constexpr static double textDistance = 2 * k;
 
