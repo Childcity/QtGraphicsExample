@@ -101,39 +101,42 @@ void Gasket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 
     QLineF lEF(lDE.p2(), QPointF(lBC.p2().x(), lAB.p2().y() + (50 - ((50-CF_)/2))*k));
     QLineF lFG(lEF.p2(), QPointF(lEF.p2().x(), lAB.p2().y() + 50*k));
-    QLineF lGH(lFG.p2(), QPointF(lFG.p2().x() - (AB_GH_-10)*k, lFG.p2().y()));
+    QLineF lGH(lFG.p2(), QPointF());
 
 
-    t.rx() = lGH.translated(stP).p2().x() - 10*k;
-    t.ry() = lGH.translated(stP).p2().y() - 10*k;
-    Arc arc(M_PI/2., M_PI, arc8R_*k, QPointF(t.x() + 10*k, t.y()));
+    t.rx() = lFG.translated(stP).p2().x() - (AB_GH_-10)*k;
+    t.ry() = lFG.translated(stP).p2().y() - 10*k;
+    Arc arc(M_PI/2., M_PI, arc8R_*k, t);
     QVector<QPointF> arc8 = arc.getPoints();
+    lGH.setP2(arc8.first() - stP);
 
 
-    t.rx() = lGH.p2().x() - 10*k;
-    t.ry() = lGH.p2().y() - 10*k;
-    QLineF lIJ(t, QPointF(t.x(), t.y() - 7.5*k));
-    QLineF lJK(lIJ.p2(), QPointF(lIJ.p2().x() + ((((6*k)))), lIJ.p2().y()));
+    t.rx() = (t-stP).x() - 10*k;
+    t.ry() = (t-stP).y();
+    QLineF lIJ(arc8.last() - stP, QPointF(t.x(), t.y() - 7.5*k));
+    QLineF lJK(lIJ.p2(), QPointF());
 
 
     t.rx() = lIJ.translated(stP).p2().x() + 17*k;
     t.ry() = lIJ.translated(stP).p2().y() - 7.5*k;
-    arc = Arc (-M_PI/1.26, M_PI/1.23, arc11R_*k, t);
+    arc = Arc(-M_PI/1.25, M_PI/1.23, arc11R_*k, t);
     QVector<QPointF> arc11 = arc.getPoints();
+    lJK.setP2(arc11.last() - stP);
 
 
     t.rx() = lIJ.p2().x();
     t.ry() = lIJ.p2().y() - 15*k;
-    QLineF lMN(t, QPointF(t.x(), t.y() - 7.5*k));
-    QLineF lLM(lMN.p1(), QPointF(lMN.p1().x() + ((((6*k)))), lMN.p1().y()));
+    QLineF lLM(t, arc11.first() - stP);
+    QLineF lMN(t, QPointF());
 
 
     t.rx() = (t+stP).x() + 10*k;
     t.ry() = (t+stP).y() - 7.5*k;
     arc = Arc (-M_PI, -M_PI/2., arc13R_*k, t);
     QVector<QPointF> arc13 = arc.getPoints();
+
     lMN.setP2(arc13.first() - stP); // set end of MN to start of Arc
-    lAB.setP1(arc13.last() - stP);
+    lAB.setP1(arc13.last() - stP); // set start of AB to end of Arc
 
     QVector<QLineF> lines({
                             lAB, lBC, lCD, lDE, lEF, lFG, lGH, lIJ, lJK, lLM, lMN
@@ -148,8 +151,13 @@ void Gasket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     //############### drawing detail lines #################
 
     // draw rectangle
-    painter->setPen({Qt::black, 1});
+    painter->setPen(QPen(Qt::black, 2, Qt::PenStyle::DashDotLine));
     //painter->drawRect(rect);
+
+    // draw symetric line
+    t.rx() = stP.x() - 2*k;
+    t.ry() = stP.y() + 50.*k/2.;
+    painter->drawLine(t, QPointF(t.x() + AB_GH_*k + 4*k, t.y()));
 
     // painting lines
     painter->setPen({Qt::red, 3});

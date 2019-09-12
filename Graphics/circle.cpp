@@ -16,12 +16,13 @@ QVector<QPointF> Graphics::Circle::getPoints() const {
         double y = sin (phi) * r_ + center_.y();
         points += QPointF(x, y);
 
-        if(n % 2 == 0 && phi > startAngle_){ // for filling spaces between dashed lines
-            points += QPointF(x, y);
-            x = cos (phi - phiStep_) * r_ + center_.x();
-            y = sin (phi - phiStep_) * r_ + center_.y();
-            points += QPointF(x, y);
-        }
+        if(phi > startAngle_ && phi < endAngle_)
+            if(n % 2 == 0){ // for filling spaces between dashed lines
+                points += QPointF(x, y);
+                x = cos (phi - phiStep_) * r_ + center_.x();
+                y = sin (phi - phiStep_) * r_ + center_.y();
+                points += QPointF(x, y);
+            }
     }
 
     return points;

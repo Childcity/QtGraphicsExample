@@ -340,7 +340,7 @@
         <item>
          <widget class="QLabel" name="label_3">
           <property name="text">
-           <string>AN</string>
+           <string>Арка AN</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -354,6 +354,9 @@
           </property>
           <item>
            <widget class="QSlider" name="horizontalSlider">
+            <property name="minimum">
+             <number>-99</number>
+            </property>
             <property name="value">
              <number>10</number>
             </property>
@@ -364,6 +367,9 @@
           </item>
           <item>
            <widget class="QSpinBox" name="spinBox_5">
+            <property name="minimum">
+             <number>-99</number>
+            </property>
             <property name="value">
              <number>10</number>
             </property>
@@ -374,7 +380,7 @@
         <item>
          <widget class="QLabel" name="label_4">
           <property name="text">
-           <string>IH</string>
+           <string>Арка IH</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -388,6 +394,9 @@
           </property>
           <item>
            <widget class="QSlider" name="horizontalSlider_6">
+            <property name="minimum">
+             <number>-99</number>
+            </property>
             <property name="value">
              <number>10</number>
             </property>
@@ -398,6 +407,9 @@
           </item>
           <item>
            <widget class="QSpinBox" name="spinBox_6">
+            <property name="minimum">
+             <number>-99</number>
+            </property>
             <property name="value">
              <number>10</number>
             </property>
@@ -406,25 +418,9 @@
          </layout>
         </item>
         <item>
-         <widget class="Line" name="line_2">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>10</height>
-           </size>
-          </property>
-          <property name="midLineWidth">
-           <number>5</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QLabel" name="label_5">
           <property name="text">
-           <string>KL</string>
+           <string>Арка KL</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignBottom|Qt::AlignHCenter</set>
@@ -438,6 +434,9 @@
           </property>
           <item>
            <widget class="QSlider" name="horizontalSlider_4">
+            <property name="minimum">
+             <number>-99</number>
+            </property>
             <property name="value">
              <number>13</number>
             </property>
@@ -448,6 +447,9 @@
           </item>
           <item>
            <widget class="QSpinBox" name="spinBox_3">
+            <property name="minimum">
+             <number>-99</number>
+            </property>
             <property name="value">
              <number>13</number>
             </property>
