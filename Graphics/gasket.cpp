@@ -128,11 +128,12 @@ void Gasket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     QLineF lLM(lMN.p1(), QPointF(lMN.p1().x() + ((((6*k)))), lMN.p1().y()));
 
 
-    t.rx() = lMN.translated(stP).p2().x() + 10*k;
-    t.ry() = lMN.translated(stP).p2().y();
+    t.rx() = (t+stP).x() + 10*k;
+    t.ry() = (t+stP).y() - 7.5*k;
     arc = Arc (-M_PI, -M_PI/2., arc13R_*k, t);
     QVector<QPointF> arc13 = arc.getPoints();
-
+    lMN.setP2(arc13.first() - stP); // set end of MN to start of Arc
+    lAB.setP1(arc13.last() - stP);
 
     QVector<QLineF> lines({
                             lAB, lBC, lCD, lDE, lEF, lFG, lGH, lIJ, lJK, lLM, lMN

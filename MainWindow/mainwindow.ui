@@ -340,7 +340,7 @@
         <item>
          <widget class="QLabel" name="label_3">
           <property name="text">
-           <string>Arc Top Left</string>
+           <string>AN</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -374,7 +374,7 @@
         <item>
          <widget class="QLabel" name="label_4">
           <property name="text">
-           <string>Arc Bottom Left</string>
+           <string>IH</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -424,7 +424,7 @@
         <item>
          <widget class="QLabel" name="label_5">
           <property name="text">
-           <string>Arc Center</string>
+           <string>KL</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignBottom|Qt::AlignHCenter</set>
