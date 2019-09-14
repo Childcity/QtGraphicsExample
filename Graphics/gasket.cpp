@@ -4,6 +4,7 @@
 #include <QPainter>
 #include <QPen>
 #include <QWidget>
+#include <algorithm>
 #include <QDebug>
 
 void Gasket::setABGH(double value)
@@ -81,11 +82,9 @@ void Gasket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     Q_UNUSED(option); Q_UNUSED(widget);
     using namespace Graphics;
 
-    QRectF rect = boundingRect();
-
     //############### creating detail lines #################
 
-    QPointF stP = rect.topLeft();
+    QPointF stP = boundingRect().topLeft();
     QPointF t; //tmp point
 
 
@@ -150,14 +149,8 @@ void Gasket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 
     //############### drawing detail lines #################
 
-    // draw rectangle
-    painter->setPen(QPen(Qt::black, 2, Qt::PenStyle::DashDotLine));
-    //painter->drawRect(rect);
-
-    // draw symetric line
-    t.rx() = stP.x() - 2*k;
-    t.ry() = stP.y() + 50.*k/2.;
-    painter->drawLine(t, QPointF(t.x() + AB_GH_*k + 4*k, t.y()));
+    // painting symetric lines
+    drawSymetricLines(painter, arc11);
 
     // painting lines
     painter->setPen({Qt::red, 3});
@@ -169,6 +162,24 @@ void Gasket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     // painting text
     if(isPointsNamesVisible_)
         drawPointsNames(painter, lines);
+}
+
+void Gasket::drawSymetricLines(QPainter *painter, const QVector<QPointF> &arc)
+{
+    QPointF stP = boundingRect().topLeft();
+    painter->setPen(QPen(Qt::black, 2, Qt::PenStyle::DashDotLine));
+    //painter->drawRect(rect); //draw rectangle
+
+    // draw symetric line
+    QPointF t(stP.x() - 2*k, stP.y() + 50.*k/2.);
+    painter->drawLine(t, QPointF(t.x() + AB_GH_*k + 4*k + (PB_<0 ? -PB_*k:0), t.y()));
+
+    QPointF arcTopPoint = *std::min_element(arc.constBegin(), arc.constEnd()
+                                            , [](const QPointF &l, const QPointF &r){return r.y()>l.y();});
+    arcTopPoint.ry() -= 2*k;
+    double radius = arcTopPoint.y() - t.y();
+    painter->drawLine(arcTopPoint, {arcTopPoint.x()
+                                    , arcTopPoint.y() - 2 * radius});
 }
 
 void Gasket::drawPointsNames(QPainter *painter, const QVector<QLineF> &lines)

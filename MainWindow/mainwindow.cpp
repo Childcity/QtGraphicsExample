@@ -12,8 +12,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     chart_ = new QChart();
     chart_->setTitle("Городецкий Николай - Вариант №3");
-    chart_->addSeries(new QLineSeries(new QLineSeries()));
-    chart_->createDefaultAxes();
     chart_->legend()->setVisible(false);
 
     QValueAxis *axisX = new QValueAxis(chart_);

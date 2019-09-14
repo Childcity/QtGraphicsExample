@@ -8,13 +8,13 @@
 
 namespace  Graphics {
 
-const double PHI_STEP = 0.05;
+const static double PHI_STEP = 0.05;
 
 class Circle : public Figure {
 protected:
     double r_;
     QPointF center_;
-    double phiStep_; //step for drawing
+    double phiStep_ = PHI_STEP; //step for drawing
     double startAngle_ = 0.;
     double endAngle_ = 2. * M_PI;
 

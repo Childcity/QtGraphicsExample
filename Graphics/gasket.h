@@ -54,6 +54,8 @@ public:
 
 private:
     void drawPointsNames(QPainter *painter, const QVector<QLineF> &lines);
+
+    void drawSymetricLines(QPainter *painter, const QVector<QPointF> &arc11);
 };
 
 #endif // GASKET_H
