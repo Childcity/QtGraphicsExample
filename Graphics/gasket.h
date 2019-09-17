@@ -14,7 +14,7 @@ private:
 
     QChart *chart_;
 
-    bool isPointsNamesVisible_ = true;
+    bool isPointsNamesVisible_ = false;
     double height_ = 50;
     double AB_GH_ = 55;
     double CF_ = 20;
@@ -24,13 +24,13 @@ private:
     double arc13R_ = 10;
     double arc11R_ = 13;
 
+protected:
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+
 public:
     Gasket(QChart *chart);
 
-public:
     QRectF boundingRect() const override;
-
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
     void setABGH(double value);
 

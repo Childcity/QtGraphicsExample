@@ -68,19 +68,32 @@ void Gasket::setPB(double BP)
 
 Gasket::Gasket(QChart *chart)
     : chart_(chart)
-{}
+{
+    QPointF coordStart = {chart_->boundingRect().topLeft().x() + 43, chart_->boundingRect().topLeft().y() + 170};
+    setPos(coordStart);
+}
 
 QRectF Gasket::boundingRect() const
 {
     // outer most edges
-    QPointF bootomLeft = chart_->plotArea().bottomLeft();
-    return QRectF(bootomLeft.x(), bootomLeft.y() - height_*k, AB_GH_*k, 50*k);
+    //QPointF bootomLeft = chart_->plotArea().bottomLeft();
+    return QRectF(x(),y(), AB_GH_*k, 50*k);
 }
 
 void Gasket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(option); Q_UNUSED(widget);
     using namespace Graphics;
+
+    QPointF center = boundingRect().center();
+    //gasket_->setTransformOriginPoint(center);
+    QTransform tr;
+    tr.translate(center.x(), center.y());
+    tr.rotate(15);
+    tr.translate(-center.x(), -center.y());
+    prepareGeometryChange();
+    setTransform(tr);
+    update();
 
     //############### creating detail lines #################
 
@@ -168,7 +181,8 @@ void Gasket::drawSymetricLines(QPainter *painter, const QVector<QPointF> &arc)
 {
     QPointF stP = boundingRect().topLeft();
     painter->setPen(QPen(Qt::black, 2, Qt::PenStyle::DashDotLine));
-    //painter->drawRect(rect); //draw rectangle
+    painter->drawRect(boundingRect()); //draw rectangle
+    painter->drawEllipse(*new QRectF(pos(), QSizeF(10, 10)));
 
     // draw symetric line
     QPointF t(stP.x() - 2*k, stP.y() + 50.*k/2.);

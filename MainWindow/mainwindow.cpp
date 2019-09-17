@@ -49,6 +49,14 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui_->spinBox_7, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setDE(value); });
     connect(ui_->spinBox_8, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setPB(value); });
 
+//    QPointF center = gasket_->boundingRect().center();
+//    //gasket_->setTransformOriginPoint(center);
+//    QTransform t;
+//    t.translate(center.x(), center.y());
+//    t.rotate(15);
+//    t.translate(-center.x(), -center.y());
+//    gasket_->setTransform(t);
+
     scene_->addItem(gasket_);
 }
 
