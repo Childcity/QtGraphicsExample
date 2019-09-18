@@ -8,11 +8,13 @@ using namespace QtCharts;
 
 class Gasket : public QGraphicsItem {
 private:
+    constexpr static double margin = 10;
     constexpr static double k = 5.65;
     constexpr static int fontSize = 12;
     constexpr static double textDistance = 2 * k;
 
     QChart *chart_;
+    QPointF coordStart_;
 
     bool isPointsNamesVisible_ = false;
     double height_ = 50;
@@ -23,6 +25,10 @@ private:
     double arc8R_ = 10;
     double arc13R_ = 10;
     double arc11R_ = 13;
+
+    // Transformations
+    double rotateAncle_ = 0;
+    QPointF rotatePoint_;
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
@@ -52,10 +58,15 @@ public:
 
     void setPB(double BP);
 
+    void setRotateAncle(double rotateAncle);
+
+    QPointF getCoordStart() const;
+
 private:
     void drawPointsNames(QPainter *painter, const QVector<QLineF> &lines);
 
-    void drawSymetricLines(QPainter *painter, const QVector<QPointF> &arc11);
+    void drawSymetricLines(QPainter *painter, const QPointF &stP, const QVector<QPointF> &arc11);
+    void transformateDatail();
 };
 
 #endif // GASKET_H

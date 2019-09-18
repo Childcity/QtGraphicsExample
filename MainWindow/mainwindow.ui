@@ -77,7 +77,7 @@
            <string>Draw Point Name</string>
           </property>
           <property name="checked">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
          </widget>
         </item>
@@ -90,7 +90,7 @@
            </size>
           </property>
           <property name="lineWidth">
-           <number>0</number>
+           <number>1</number>
           </property>
           <property name="midLineWidth">
            <number>5</number>
@@ -327,7 +327,7 @@
            </size>
           </property>
           <property name="lineWidth">
-           <number>0</number>
+           <number>1</number>
           </property>
           <property name="midLineWidth">
            <number>5</number>
@@ -452,6 +452,84 @@
             </property>
             <property name="value">
              <number>13</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="Line" name="line_2">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>10</height>
+           </size>
+          </property>
+          <property name="lineWidth">
+           <number>1</number>
+          </property>
+          <property name="midLineWidth">
+           <number>5</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_9">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Трансформация</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_10">
+          <property name="text">
+           <string>Угол поворота</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_10">
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QSlider" name="horizontalSlider_9">
+            <property name="minimum">
+             <number>-360</number>
+            </property>
+            <property name="maximum">
+             <number>360</number>
+            </property>
+            <property name="singleStep">
+             <number>4</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="spinBox_9">
+            <property name="minimum">
+             <number>-360</number>
+            </property>
+            <property name="maximum">
+             <number>360</number>
             </property>
            </widget>
           </item>
@@ -759,6 +837,38 @@
     <hint type="destinationlabel">
      <x>693</x>
      <y>228</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_9</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox_9</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>818</x>
+     <y>175</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>878</x>
+     <y>52</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox_9</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>horizontalSlider_9</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>878</x>
+     <y>52</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>818</x>
+     <y>175</y>
     </hint>
    </hints>
   </connection>

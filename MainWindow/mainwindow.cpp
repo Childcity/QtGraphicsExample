@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui_->setupUi(this);
 
     chart_ = new QChart();
+    chart_->setParent(this);
     chart_->setTitle("Городецкий Николай - Вариант №3");
     chart_->legend()->setVisible(false);
 
@@ -48,16 +49,13 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui_->spinBox_4, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setCF(value); });
     connect(ui_->spinBox_7, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setDE(value); });
     connect(ui_->spinBox_8, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setPB(value); });
+    connect(ui_->spinBox_9, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setRotateAncle(value); });
 
-//    QPointF center = gasket_->boundingRect().center();
-//    //gasket_->setTransformOriginPoint(center);
-//    QTransform t;
-//    t.translate(center.x(), center.y());
-//    t.rotate(15);
-//    t.translate(-center.x(), -center.y());
-//    gasket_->setTransform(t);
+
+    QGraphicsEllipseItem *rotatePoint = new QGraphicsEllipseItem(*new QRectF(pos().x()-5, pos().y()-5, 10, 10), gasket_);
 
     scene_->addItem(gasket_);
+    scene_->addItem(rotatePoint);
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event)
@@ -69,4 +67,5 @@ MainWindow::~MainWindow()
 {
     delete ui_;
     delete gasket_;
+    chart_->deleteLater();
 }

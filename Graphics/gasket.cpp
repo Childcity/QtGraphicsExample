@@ -6,6 +6,7 @@
 #include <QWidget>
 #include <algorithm>
 #include <QDebug>
+#include <QMatrix4x4>
 
 void Gasket::setABGH(double value)
 {
@@ -66,18 +67,33 @@ void Gasket::setPB(double BP)
     redraw();
 }
 
+void Gasket::setRotateAncle(double rotateAncle)
+{
+    rotateAncle_ = rotateAncle;
+    redraw();
+}
+
+QPointF Gasket::getCoordStart() const
+{
+    return coordStart_;
+}
+
 Gasket::Gasket(QChart *chart)
     : chart_(chart)
 {
-    QPointF coordStart = {chart_->boundingRect().topLeft().x() + 43, chart_->boundingRect().topLeft().y() + 170};
-    setPos(coordStart);
+    coordStart_ = {chart_->boundingRect().topLeft().x() + 43, chart_->boundingRect().topLeft().y() + 170 + 142};
+    rotatePoint_= coordStart_;
+    setPos(coordStart_);
 }
 
 QRectF Gasket::boundingRect() const
 {
     // outer most edges
     //QPointF bootomLeft = chart_->plotArea().bottomLeft();
-    return QRectF(x(),y(), AB_GH_*k, 50*k);
+    return QRectF(x()-margin
+                  , y()-margin - 50*k //50 - detail width
+                  , (AB_GH_ + (PB_<0?-PB_:0))*k + margin*2 // if PB is longer then AB -> boundingRect should be extended till PB ends
+                  , 50*k + margin*2);
 }
 
 void Gasket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -85,19 +101,9 @@ void Gasket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     Q_UNUSED(option); Q_UNUSED(widget);
     using namespace Graphics;
 
-    QPointF center = boundingRect().center();
-    //gasket_->setTransformOriginPoint(center);
-    QTransform tr;
-    tr.translate(center.x(), center.y());
-    tr.rotate(15);
-    tr.translate(-center.x(), -center.y());
-    prepareGeometryChange();
-    setTransform(tr);
-    update();
-
     //############### creating detail lines #################
 
-    QPointF stP = boundingRect().topLeft();
+    QPointF stP = {boundingRect().topLeft().x()+margin, boundingRect().topLeft().y()+margin};
     QPointF t; //tmp point
 
 
@@ -163,7 +169,7 @@ void Gasket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     //############### drawing detail lines #################
 
     // painting symetric lines
-    drawSymetricLines(painter, arc11);
+    drawSymetricLines(painter, stP, arc11);
 
     // painting lines
     painter->setPen({Qt::red, 3});
@@ -175,14 +181,33 @@ void Gasket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     // painting text
     if(isPointsNamesVisible_)
         drawPointsNames(painter, lines);
+
+    transformateDatail();
 }
 
-void Gasket::drawSymetricLines(QPainter *painter, const QVector<QPointF> &arc)
+void Gasket::transformateDatail()
 {
-    QPointF stP = boundingRect().topLeft();
+    //setTransformOriginPoint(center);
+
+    float a    = static_cast<float>(M_PI/180. * rotateAncle_);
+    float sina = sinf(a);
+    float cosa = cosf(a);
+    float centerX = static_cast<float>(rotatePoint_.x());
+    float centerY = static_cast<float>(rotatePoint_.y());
+
+    QMatrix4x4 transformationMatrix(cosa,    sina,  0,   centerX - cosa*centerX - sina*centerY,
+                                    -sina,   cosa,  0,   centerY - -sina*centerX - cosa*centerY,
+                                    0,       0,     1,   0,
+                                    0,       0,     0,   1);
+
+    setTransform(transformationMatrix.toTransform());
+}
+
+void Gasket::drawSymetricLines(QPainter *painter, const QPointF &stP, const QVector<QPointF> &arc)
+{
     painter->setPen(QPen(Qt::black, 2, Qt::PenStyle::DashDotLine));
     painter->drawRect(boundingRect()); //draw rectangle
-    painter->drawEllipse(*new QRectF(pos(), QSizeF(10, 10)));
+    //painter->drawEllipse(*new QRectF(pos().x()-5, pos().y()-5, 10, 10));
 
     // draw symetric line
     QPointF t(stP.x() - 2*k, stP.y() + 50.*k/2.);
