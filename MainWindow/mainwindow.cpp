@@ -4,6 +4,8 @@
 #include <QChartView>
 #include <qchart.h>
 
+#include <Graphics/gasketrotatepoint.h>
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui_(new Ui::MainWindow)
@@ -41,18 +43,23 @@ MainWindow::MainWindow(QWidget *parent) :
     gasket_ = new Gasket(chart_);
 
     connect(ui_->checkBox, &QCheckBox::clicked, [=](bool value){ gasket_->setPointsNamesVisible(value); });
-    connect(ui_->spinBox, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setABGH(value); });
-    connect(ui_->spinBox_2, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setHeight(value); });
-    connect(ui_->spinBox_5, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setArc13R(value); });
-    connect(ui_->spinBox_6, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setArc8R(value); });
-    connect(ui_->spinBox_3, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setArc11R(value); });
-    connect(ui_->spinBox_4, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setCF(value); });
-    connect(ui_->spinBox_7, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setDE(value); });
-    connect(ui_->spinBox_8, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setPB(value); });
-    connect(ui_->spinBox_9, QOverload<int>::of(&QSpinBox::valueChanged), [=](int value){ gasket_->setRotateAncle(value); });
+    connect(ui_->spinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setABGH(value); });
+    connect(ui_->spinBox_2, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setHeight(value); });
+    connect(ui_->spinBox_10, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setWidth(value); });
+    connect(ui_->spinBox_5, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setArc13R(value); });
+    connect(ui_->spinBox_6, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setArc8R(value); });
+    connect(ui_->spinBox_3, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setArc11R(value); });
+    connect(ui_->spinBox_4, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setCF(value); });
+    connect(ui_->spinBox_7, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setDE(value); });
+    connect(ui_->spinBox_8, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setPB(value); });
+    connect(ui_->spinBox_9, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setRotateAncle(value); });
 
 
-    QGraphicsEllipseItem *rotatePoint = new QGraphicsEllipseItem(*new QRectF(pos().x()-5, pos().y()-5, 10, 10), gasket_);
+    GasketRotatePoint *rotatePoint = new GasketRotatePoint();
+    QPointF mapedPos = rotatePoint->mapFromItem(gasket_, gasket_->pos());
+    QPointF delta = mapedPos - gasket_->pos();
+    rotatePoint->setPos(mapedPos);
+    connect(rotatePoint, &GasketRotatePoint::positionChanged, this, [=](const QPointF &value){ gasket_->setRotatePoint(value - delta); });
 
     scene_->addItem(gasket_);
     scene_->addItem(rotatePoint);

@@ -20,6 +20,12 @@ void Gasket::setHeight(double value)
     redraw();
 }
 
+void Gasket::setWidth(double width)
+{
+    width_ = width;
+    redraw();
+}
+
 void Gasket::redraw() {
     update();
     chart_->update();
@@ -73,25 +79,27 @@ void Gasket::setRotateAncle(double rotateAncle)
     redraw();
 }
 
-QPointF Gasket::getCoordStart() const
+void Gasket::setRotatePoint(const QPointF &rotatePoint)
 {
-    return coordStart_;
+    rotatePoint_ = rotatePoint;
+    redraw();
 }
 
 Gasket::Gasket(QChart *chart)
     : chart_(chart)
 {
-    coordStart_ = {chart_->boundingRect().topLeft().x() + 43, chart_->boundingRect().topLeft().y() + 170 + 142};
-    rotatePoint_= coordStart_;
-    setPos(coordStart_);
+    setPos({chart_->pos().x() + 43, chart_->pos().y() + 170 + 142});
+    rotatePoint_ = pos();
 }
+
+Gasket::~Gasket(){}
 
 QRectF Gasket::boundingRect() const
 {
     // outer most edges
     //QPointF bootomLeft = chart_->plotArea().bottomLeft();
-    return QRectF(x()-margin
-                  , y()-margin - 50*k //50 - detail width
+    return QRectF(x()-margin + width_*k
+                  , y()-margin - 50*k - height_*k //50 - detail width
                   , (AB_GH_ + (PB_<0?-PB_:0))*k + margin*2 // if PB is longer then AB -> boundingRect should be extended till PB ends
                   , 50*k + margin*2);
 }
@@ -206,8 +214,9 @@ void Gasket::transformateDatail()
 void Gasket::drawSymetricLines(QPainter *painter, const QPointF &stP, const QVector<QPointF> &arc)
 {
     painter->setPen(QPen(Qt::black, 2, Qt::PenStyle::DashDotLine));
-    painter->drawRect(boundingRect()); //draw rectangle
-    //painter->drawEllipse(*new QRectF(pos().x()-5, pos().y()-5, 10, 10));
+    //painter->drawRect(boundingRect()); //draw rectangle
+    //painter->drawEllipse(QRectF(pos().x()-5, pos().y()-5, 10, 10));
+    //painter->drawEllipse(QRectF(rotatePoint_.x()-5, rotatePoint_.y()-5, 10, 10));
 
     // draw symetric line
     QPointF t(stP.x() - 2*k, stP.y() + 50.*k/2.);

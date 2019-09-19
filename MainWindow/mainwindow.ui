@@ -103,7 +103,7 @@
         <item>
          <widget class="QLabel" name="label_2">
           <property name="text">
-           <string>Height</string>
+           <string>Отступ по Y</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -123,8 +123,11 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="minimum">
+             <number>-99</number>
+            </property>
             <property name="value">
-             <number>50</number>
+             <number>0</number>
             </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -139,8 +142,45 @@
               <height>16777215</height>
              </size>
             </property>
+            <property name="minimum">
+             <number>-99</number>
+            </property>
             <property name="value">
-             <number>50</number>
+             <number>0</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_11">
+          <property name="text">
+           <string>Отступ по X</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_11">
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QSlider" name="horizontalSlider_10">
+            <property name="minimum">
+             <number>-99</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="spinBox_10">
+            <property name="minimum">
+             <number>-99</number>
             </property>
            </widget>
           </item>
@@ -869,6 +909,38 @@
     <hint type="destinationlabel">
      <x>818</x>
      <y>175</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSlider_10</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>spinBox_10</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>804</x>
+     <y>148</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>911</x>
+     <y>148</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBox_10</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>horizontalSlider_10</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>911</x>
+     <y>148</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>804</x>
+     <y>148</y>
     </hint>
    </hints>
   </connection>

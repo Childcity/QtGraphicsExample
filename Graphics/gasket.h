@@ -14,10 +14,10 @@ private:
     constexpr static double textDistance = 2 * k;
 
     QChart *chart_;
-    QPointF coordStart_;
 
     bool isPointsNamesVisible_ = false;
-    double height_ = 50;
+    double height_ = 0;
+    double width_ = 0;
     double AB_GH_ = 55;
     double CF_ = 20;
     double DE_ = 30;
@@ -36,11 +36,15 @@ protected:
 public:
     Gasket(QChart *chart);
 
+    ~Gasket() override;
+
     QRectF boundingRect() const override;
 
     void setABGH(double value);
 
     void setHeight(double value);
+
+    void setWidth(double width);
 
     void redraw();
 
@@ -60,12 +64,13 @@ public:
 
     void setRotateAncle(double rotateAncle);
 
-    QPointF getCoordStart() const;
+    void setRotatePoint(const QPointF &rotatePoint);
 
 private:
     void drawPointsNames(QPainter *painter, const QVector<QLineF> &lines);
 
     void drawSymetricLines(QPainter *painter, const QPointF &stP, const QVector<QPointF> &arc11);
+
     void transformateDatail();
 };
 

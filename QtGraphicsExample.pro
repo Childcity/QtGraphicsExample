@@ -17,14 +17,16 @@ SOURCES += \
     Graphics/gasket.cpp \
 	Graphics/figure.cpp \
 	Graphics/circle.cpp \
-    Graphics/arc.cpp
+    Graphics/arc.cpp \
+    Graphics/gasketrotatepoint.cpp
 
 HEADERS += \
 	MainWindow/mainwindow.h \
     Graphics/gasket.h \
 	Graphics/figure.h \
 	Graphics/circle.h \
-    Graphics/arc.h
+    Graphics/arc.h \
+    Graphics/gasketrotatepoint.h
 
 FORMS += \
     MainWindow/mainwindow.ui
