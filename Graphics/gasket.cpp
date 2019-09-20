@@ -88,7 +88,7 @@ void Gasket::setRotatePoint(const QPointF &rotatePoint)
 Gasket::Gasket(QChart *chart)
     : chart_(chart)
 {
-    setPos({chart_->pos().x() + 43, chart_->pos().y() + 170 + 142});
+    setPos({chart_->pos().x() + 48, chart_->pos().y() + 170 + 142});
     rotatePoint_ = pos();
 }
 
