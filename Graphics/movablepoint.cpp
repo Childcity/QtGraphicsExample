@@ -1,6 +1,6 @@
-#include "gasketrotatepoint.h"
+#include "movablepoint.h"
 
-GasketRotatePoint::GasketRotatePoint(QGraphicsItem *parent)
+MovablePoint::MovablePoint(QGraphicsItem *parent)
     : QObject(), QGraphicsEllipseItem(parent)
 {
     setRect(QRectF(-10, -10, 20, 20));
@@ -13,7 +13,7 @@ GasketRotatePoint::GasketRotatePoint(QGraphicsItem *parent)
     setFlag(QGraphicsItem::ItemSendsScenePositionChanges,true);
 }
 
-QVariant GasketRotatePoint::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
+QVariant MovablePoint::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
 {
 
     if (change == QGraphicsItem::ItemPositionChange){
@@ -24,7 +24,7 @@ QVariant GasketRotatePoint::itemChange(QGraphicsItem::GraphicsItemChange change,
 
 }
 
-void GasketRotatePoint::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void MovablePoint::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if(event->button() == Qt::LeftButton)
     {
@@ -36,7 +36,7 @@ void GasketRotatePoint::mousePressEvent(QGraphicsSceneMouseEvent *event)
     event->ignore();
 }
 
-void GasketRotatePoint::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+void MovablePoint::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton)
     {
@@ -48,4 +48,4 @@ void GasketRotatePoint::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     event->ignore();
 }
 
-GasketRotatePoint::~GasketRotatePoint() {}
+MovablePoint::~MovablePoint() {}

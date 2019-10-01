@@ -4,7 +4,7 @@
 #include <QChartView>
 #include <qchart.h>
 
-#include <Graphics/gasketrotatepoint.h>
+#include <Graphics/movablepoint.h>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -55,11 +55,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui_->spinBox_9, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setRotateAncle(value); });
 
 
-    GasketRotatePoint *rotatePoint = new GasketRotatePoint();
+    MovablePoint *rotatePoint = new MovablePoint(chart_);
     QPointF mapedPos = rotatePoint->mapFromItem(gasket_, gasket_->pos());
     QPointF delta = mapedPos - gasket_->pos();
     rotatePoint->setPos(mapedPos);
-    connect(rotatePoint, &GasketRotatePoint::positionChanged, this, [=](const QPointF &value){ gasket_->setRotatePoint(value - delta); });
+    connect(rotatePoint, &MovablePoint::positionChanged, this, [=](const QPointF &value){ gasket_->setRotatePoint(value - delta); });
 
     scene_->addItem(gasket_);
     scene_->addItem(rotatePoint);

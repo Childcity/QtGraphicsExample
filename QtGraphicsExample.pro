@@ -18,7 +18,7 @@ SOURCES += \
 	Graphics/figure.cpp \
 	Graphics/circle.cpp \
     Graphics/arc.cpp \
-    Graphics/gasketrotatepoint.cpp
+    Graphics/movablepoint.cpp
 
 HEADERS += \
 	MainWindow/mainwindow.h \
@@ -26,7 +26,7 @@ HEADERS += \
 	Graphics/figure.h \
 	Graphics/circle.h \
     Graphics/arc.h \
-    Graphics/gasketrotatepoint.h
+	Graphics/movablepoint.h
 
 FORMS += \
     MainWindow/mainwindow.ui
