@@ -55,14 +55,45 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui_->spinBox_9, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setRotateAncle(value); });
 
 
-    MovablePoint *rotatePoint = new MovablePoint(chart_);
-    QPointF mapedPos = rotatePoint->mapFromItem(gasket_, gasket_->pos());
-    QPointF delta = mapedPos - gasket_->pos();
-    rotatePoint->setPos(mapedPos);
-    connect(rotatePoint, &MovablePoint::positionChanged, this, [=](const QPointF &value){ gasket_->setRotatePoint(value - delta); });
+    {
+        // setting up rotatePoint
+        MovablePoint *rotatePoint = new MovablePoint(10, Qt::blue, chart_);
+
+        QPointF mappedPos = rotatePoint->mapFromItem(gasket_, gasket_->pos());
+        QPointF delta = mappedPos - gasket_->pos();
+        rotatePoint->setPos(mappedPos);
+        connect(rotatePoint, &MovablePoint::positionChanged, this, [=](const QPointF &value){ gasket_->setRotatePoint(value - delta); });
+    }
+
+
+
+    {
+        // setting up affinePoints
+        QVector<MovablePoint::Ptr> affinePoints(3);
+        QVector<QPointF> mappedPoss(3);
+        QVector<QPointF> deltas(3);
+
+        for (int i = 0; i < affinePoints.size(); ++i) {
+            affinePoints[i] = new MovablePoint(6, Qt::green, chart_);
+
+            auto newPlace = QPointF(gasket_->pos().x(), gasket_->pos().y() - 0);
+            mappedPoss[i] = affinePoints[i]->mapFromItem(gasket_, newPlace);
+            deltas[i] = mappedPoss[i] - gasket_->pos();
+            affinePoints[i]->setPos(mappedPoss[i]);
+
+            connect(affinePoints[i], &MovablePoint::positionChanged, this, [=](const QPointF &value){ gasket_->setAffineSystemPoints(value - deltas[i], i); });
+        }
+    }
+
 
     scene_->addItem(gasket_);
-    scene_->addItem(rotatePoint);
+
+//     next doesn't need, because if we provide parent for MovablePoint object (chart_), it automaticaly adds to scene_
+//     with chart_
+//    scene_->addItem(rotatePoint);
+//    scene_->addItem(affinePoints[0]);
+//    scene_->addItem(affinePoints[1]);
+//    scene_->addItem(affinePoints[2]);
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event)

@@ -85,9 +85,17 @@ void Gasket::setRotatePoint(const QPointF &rotatePoint)
     redraw();
 }
 
+void Gasket::setAffineSystemPoints(const QPointF &affineSystemPoint, int i)
+{
+    affineSystemPoints_[i].second = affineSystemPoint;
+    affineSystemPoints_[i].first = ((i==0) ? 0.5f : ((i==1) ? 1.f : 0.5f));
+    redraw();
+}
+
 Gasket::Gasket(QChart *chart)
     : chart_(chart)
 {
+    // move to Start of XY coordinate system
     setPos({chart_->pos().x() + 48, chart_->pos().y() + 170 + 142});
     rotatePoint_ = pos();
 }
@@ -175,6 +183,7 @@ void Gasket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 
 
     //############### drawing detail lines #################
+    painter->setRenderHint(QPainter::Antialiasing);
 
     // painting symetric lines
     drawSymetricLines(painter, stP, arc11);
@@ -195,18 +204,48 @@ void Gasket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 
 void Gasket::transformateDatail()
 {
-    //setTransformOriginPoint(center);
+    QMatrix4x4 transformationMatrix;
 
-    float a    = static_cast<float>(M_PI/180. * rotateAncle_);
-    float sina = sinf(a);
-    float cosa = cosf(a);
-    float centerX = static_cast<float>(rotatePoint_.x());
-    float centerY = static_cast<float>(rotatePoint_.y());
+    {
+        float a    = static_cast<float>(M_PI/180. * rotateAncle_);
+        float sina = sinf(a);
+        float cosa = cosf(a);
+        float centerX = static_cast<float>(rotatePoint_.x());
+        float centerY = static_cast<float>(rotatePoint_.y());
 
-    QMatrix4x4 transformationMatrix(cosa,    sina,  0,   centerX - cosa*centerX - sina*centerY,
-                                    -sina,   cosa,  0,   centerY - -sina*centerX - cosa*centerY,
-                                    0,       0,     1,   0,
-                                    0,       0,     0,   1);
+        // rotate about Z and translate
+        transformationMatrix = QMatrix4x4(cosa,   sina,   0,    centerX - cosa*centerX - sina*centerY,
+                                         -sina,   cosa,   0,   centerY - -sina*centerX - cosa*centerY,
+                                          0,       0,     1,   0,
+                                          0,       0,     0,   1);
+    }
+
+
+    {
+        float Xx = static_cast<float>(affineSystemPoints_[0].second.x());
+        float Yx = static_cast<float>(affineSystemPoints_[0].second.y());
+        float Wx = static_cast<float>(affineSystemPoints_[0].first);
+
+        float X0 = static_cast<float>(affineSystemPoints_[1].second.x());
+        float Y0 = static_cast<float>(affineSystemPoints_[1].second.y());
+        float W0 = static_cast<float>(affineSystemPoints_[1].first);
+
+        float Xy = static_cast<float>(affineSystemPoints_[2].second.x());
+        float Yy = static_cast<float>(affineSystemPoints_[2].second.y());
+        float Wy = static_cast<float>(affineSystemPoints_[2].first);
+
+        transformationMatrix = QMatrix4x4(Xx*Wx,    Yx*Wx,      0,     Wx,
+                                          Xy*Wy,    Yy*Wy,      0,     Wy,
+                                          0,        0,          1,     0,
+                                          X0*W0,    Y0*W0,      0,     W0);
+
+        qDebug() <<transformationMatrix<< " isAffine =" << transformationMatrix.isAffine();
+    }
+
+//    transformationMatrix *= QMatrix4x4(1,0,0,0,
+//                                      0,-1,0,0,
+//                                      0,0,1,0,
+//                                      0,0,0,1);
 
     setTransform(transformationMatrix.toTransform());
 }
