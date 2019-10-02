@@ -29,7 +29,14 @@ private:
     // Transformations
     double rotateAncle_ = 0;
     QPointF rotatePoint_;
-    QVector<QPair<float, QPointF>> affineSystemPoints_ = QVector<QPair<float, QPointF>>(3);
+
+    // Affine
+    bool isAffineEnabled_ = false;
+    QVector<QPair<float, QPointF>> affineSystemPoints_ = {
+        QPair<float, QPointF>(10, {0, 0}),
+        QPair<float, QPointF>(1000, {0, 0}),
+        QPair<float, QPointF>(10, {0, 0})
+    };
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
@@ -67,7 +74,11 @@ public:
 
     void setRotatePoint(const QPointF &rotatePoint);
 
+    void setIsAffineEnabled(bool isAffineEnabled);
+
     void setAffineSystemPoints(const QPointF &affineSystemPoint, int i);
+
+    void setAffineSystemWeights(float weight, int i);
 
 private:
     void drawPointsNames(QPainter *painter, const QVector<QLineF> &lines);

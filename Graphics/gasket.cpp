@@ -85,10 +85,21 @@ void Gasket::setRotatePoint(const QPointF &rotatePoint)
     redraw();
 }
 
+void Gasket::setIsAffineEnabled(bool isAffineEnabled)
+{
+    isAffineEnabled_ = isAffineEnabled;
+    redraw();
+}
+
 void Gasket::setAffineSystemPoints(const QPointF &affineSystemPoint, int i)
 {
     affineSystemPoints_[i].second = affineSystemPoint;
-    affineSystemPoints_[i].first = ((i==0) ? 10.f : ((i==1) ? 1000.f : 1.f));
+    redraw();
+}
+
+void Gasket::setAffineSystemWeights(float weight, int i)
+{
+    affineSystemPoints_[i].first = weight;
     redraw();
 }
 
@@ -224,7 +235,7 @@ void Gasket::transformateDatail()
     }
 
 
-    {
+    if(isAffineEnabled_){
         double Xx = affineSystemPoints_[0].second.x();
         double Yx = affineSystemPoints_[0].second.y();
         double Wx = static_cast<double>(affineSystemPoints_[0].first);
@@ -237,9 +248,13 @@ void Gasket::transformateDatail()
         double Yy = affineSystemPoints_[2].second.y();
         double Wy = static_cast<double>(affineSystemPoints_[2].first);
 
-        transformMatrix *= QTransform(Xx*Wx,    Yx*Wx,          Wx,
-                                      Xy*Wy,    Yy*Wy,          Wy,
-                                      X0*W0,    Y0*W0,          W0);
+        auto affineT = QTransform(Xx*Wx,    Yx*Wx,          Wx,
+                                 Xy*Wy,    Yy*Wy,          Wy,
+                                 X0*W0,    Y0*W0,          W0);
+        transformMatrix *= affineT;
+        setPos(x() + 8 *k, y());
+        chart_->setPos(mapFromItem(this, pos()));
+        chart_->setTransform(affineT);
     }
 
     setTransform(transformMatrix);
