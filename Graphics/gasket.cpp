@@ -88,7 +88,7 @@ void Gasket::setRotatePoint(const QPointF &rotatePoint)
 void Gasket::setAffineSystemPoints(const QPointF &affineSystemPoint, int i)
 {
     affineSystemPoints_[i].second = affineSystemPoint;
-    affineSystemPoints_[i].first = ((i==0) ? 0.5f : ((i==1) ? 1.f : 0.5f));
+    affineSystemPoints_[i].first = ((i==0) ? 10.f : ((i==1) ? 1000.f : 1.f));
     redraw();
 }
 
@@ -205,6 +205,7 @@ void Gasket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 void Gasket::transformateDatail()
 {
     QMatrix4x4 transformationMatrix;
+    QTransform transformMatrix;
 
     {
         float a    = static_cast<float>(M_PI/180. * rotateAncle_);
@@ -218,36 +219,30 @@ void Gasket::transformateDatail()
                                          -sina,   cosa,   0,   centerY - -sina*centerX - cosa*centerY,
                                           0,       0,     1,   0,
                                           0,       0,     0,   1);
+
+        transformMatrix = transformationMatrix.toTransform();
     }
 
 
     {
-        float Xx = static_cast<float>(affineSystemPoints_[0].second.x());
-        float Yx = static_cast<float>(affineSystemPoints_[0].second.y());
-        float Wx = static_cast<float>(affineSystemPoints_[0].first);
+        double Xx = affineSystemPoints_[0].second.x();
+        double Yx = affineSystemPoints_[0].second.y();
+        double Wx = static_cast<double>(affineSystemPoints_[0].first);
 
-        float X0 = static_cast<float>(affineSystemPoints_[1].second.x());
-        float Y0 = static_cast<float>(affineSystemPoints_[1].second.y());
-        float W0 = static_cast<float>(affineSystemPoints_[1].first);
+        double X0 = static_cast<double>(affineSystemPoints_[1].second.x());
+        double Y0 = affineSystemPoints_[1].second.y();
+        double W0 = static_cast<double>(affineSystemPoints_[1].first);
 
-        float Xy = static_cast<float>(affineSystemPoints_[2].second.x());
-        float Yy = static_cast<float>(affineSystemPoints_[2].second.y());
-        float Wy = static_cast<float>(affineSystemPoints_[2].first);
+        double Xy = affineSystemPoints_[2].second.x();
+        double Yy = affineSystemPoints_[2].second.y();
+        double Wy = static_cast<double>(affineSystemPoints_[2].first);
 
-        transformationMatrix = QMatrix4x4(Xx*Wx,    Yx*Wx,      0,     Wx,
-                                          Xy*Wy,    Yy*Wy,      0,     Wy,
-                                          0,        0,          1,     0,
-                                          X0*W0,    Y0*W0,      0,     W0);
-
-        qDebug() <<transformationMatrix<< " isAffine =" << transformationMatrix.isAffine();
+        transformMatrix *= QTransform(Xx*Wx,    Yx*Wx,          Wx,
+                                      Xy*Wy,    Yy*Wy,          Wy,
+                                      X0*W0,    Y0*W0,          W0);
     }
 
-//    transformationMatrix *= QMatrix4x4(1,0,0,0,
-//                                      0,-1,0,0,
-//                                      0,0,1,0,
-//                                      0,0,0,1);
-
-    setTransform(transformationMatrix.toTransform());
+    setTransform(transformMatrix);
 }
 
 void Gasket::drawSymetricLines(QPainter *painter, const QPointF &stP, const QVector<QPointF> &arc)
