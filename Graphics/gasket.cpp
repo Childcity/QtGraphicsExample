@@ -252,7 +252,7 @@ void Gasket::transformateDatail()
                                  Xy*Wy,    Yy*Wy,          Wy,
                                  X0*W0,    Y0*W0,          W0);
         transformMatrix *= affineT;
-        setPos(x() + 8 *k, y());
+        //setPos(x() + 8, y());
         chart_->setPos(mapFromItem(this, pos()));
         chart_->setTransform(affineT);
     }
