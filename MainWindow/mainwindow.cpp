@@ -61,12 +61,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     {
         // setting up rotatePoint
-        MovablePoint *rotatePoint = new MovablePoint(10, Qt::blue, chart_);
+        MovablePoint *rotatePoint = new MovablePoint(10, Qt::blue, "", chart_);
 
         QPointF mappedPos = rotatePoint->mapFromItem(gasket_, gasket_->pos());
         QPointF delta = mappedPos - gasket_->pos();
         rotatePoint->setPos(mappedPos);
-        connect(rotatePoint, &MovablePoint::positionChanged, this, [=](const QPointF &value){ gasket_->setRotatePoint(value - delta); });
+        connect(rotatePoint, &MovablePoint::positionChanged, this, [=](const QPointF &value){ ui_->checkBox_2->isChecked() ? gasket_->setRotatePoint(value) : gasket_->setRotatePoint(value - delta); });
     }
 
 
@@ -78,9 +78,9 @@ MainWindow::MainWindow(QWidget *parent) :
         QVector<QPointF> deltas(3);
 
         for (int i = 0; i < affinePoints.size(); ++i) {
-            affinePoints[i] = new MovablePoint(6, Qt::green);
+            affinePoints[i] = new MovablePoint(6, Qt::green, {i+49});
 
-            auto newPlace = QPointF(gasket_->pos().x(), gasket_->pos().y() - 0);
+            auto newPlace = QPointF(gasket_->pos().x()-20, gasket_->pos().y()+20);
             mappedPoss[i] = affinePoints[i]->mapFromItem(gasket_, newPlace);
             deltas[i] = mappedPoss[i] - gasket_->pos();
             affinePoints[i]->setPos(mappedPoss[i]);

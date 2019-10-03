@@ -1,9 +1,12 @@
 #include "movablepoint.h"
 
-MovablePoint::MovablePoint(int radius, Qt::GlobalColor color, QGraphicsItem *parent)
+#include <QPainter>
+
+MovablePoint::MovablePoint(int radius, Qt::GlobalColor color, QString label, QGraphicsItem *parent)
     : QObject()
     , QGraphicsEllipseItem(parent)
     , color_(color)
+    , label_(label)
 {
     setRect(QRectF(-radius, -radius, 2*radius, 2*radius));
 
@@ -24,6 +27,19 @@ QVariant MovablePoint::itemChange(QGraphicsItem::GraphicsItemChange change, cons
 
     return QGraphicsItem::itemChange(change, value);
 
+}
+
+QRectF MovablePoint::boundingRect() const
+{
+    QRectF rect = QGraphicsEllipseItem::boundingRect();
+    return QRectF(rect.topLeft().x() - 10, rect.topLeft().y() - 10,
+                  rect.width() + 10, rect.height() + 10);
+}
+
+void MovablePoint::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    QGraphicsEllipseItem::paint(painter, option, widget);
+    painter->drawText(boundingRect().center() + QPoint(7,10), label_);    // Draw you text
 }
 
 void MovablePoint::mousePressEvent(QGraphicsSceneMouseEvent *event)

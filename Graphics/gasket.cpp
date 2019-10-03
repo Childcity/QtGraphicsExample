@@ -117,7 +117,7 @@ QRectF Gasket::boundingRect() const
 {
     // outer most edges
     //QPointF bootomLeft = chart_->plotArea().bottomLeft();
-    return QRectF(x()-margin + width_*k + 5*k + (isAffineEnabled_ ? affineXYDelta.x()*k : 0)
+    return QRectF(x()-margin + width_*k + (isAffineEnabled_ ? affineXYDelta.x()*k : 0)
                   , y()-margin - 50*k - height_*k + (isAffineEnabled_ ? affineXYDelta.y()*k : 0)//50 - detail width
                   , (AB_GH_ + (PB_<0?-PB_:0))*k + margin*2 // if PB is longer then AB -> boundingRect should be extended till PB ends
                   , 50*k + margin*2);
@@ -253,7 +253,7 @@ void Gasket::transformateDatail()
                                  X0*W0,    Y0*W0,          W0);
         transformMatrix *= affineT;
 
-        chart_->setPos(mapFromItem(this, pos()));
+        chart_->setPos(pos());
         chart_->setTransform(affineT);
     }
 
