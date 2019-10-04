@@ -37,7 +37,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui_->chartView->setRenderHint(QPainter::Antialiasing);
     ui_->chartView->setChart(chart_);
-    scene_ = ui_->chartView->scene();
 
     // create our Gasket object and add it to the scene
     gasket_ = new Gasket(chart_);
@@ -80,16 +79,19 @@ MainWindow::MainWindow(QWidget *parent) :
         for (int i = 0; i < affinePoints.size(); ++i) {
             affinePoints[i] = new MovablePoint(6, Qt::green, {i+49});
 
-            auto newPlace = QPointF(gasket_->pos().x()-20, gasket_->pos().y()+20);
+            auto newPlace = QPointF(i==0 ? gasket_->getCoordYEnd() : i==1 ? gasket_->pos() : gasket_->getCoordXEnd());
             mappedPoss[i] = affinePoints[i]->mapFromItem(gasket_, newPlace);
-            deltas[i] = mappedPoss[i] - gasket_->pos();
-            affinePoints[i]->setPos(mappedPoss[i]);
+            deltas[i] = mappedPoss[i] - newPlace;
 
             connect(affinePoints[i], &MovablePoint::positionChanged, this, [=](const QPointF &value){ gasket_->setAffineSystemPoints(value - deltas[i], i); });
+            affinePoints[i]->setPos(mappedPoss[i]);
         }
     //}
 
 
+
+    scene_ = ui_->chartView->scene();
+    scene_->setBackgroundBrush((QBrush(Qt::white, Qt::SolidPattern)));
     scene_->addItem(gasket_);
 
 //     next doesn't need, because if we provide parent for MovablePoint object (chart_), it automaticaly adds to scene_

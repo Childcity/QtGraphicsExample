@@ -81,6 +81,10 @@ public:
 
     void setAffineSystemWeights(float weight, int i);
 
+    QPointF getCoordXEnd();
+
+    QPointF getCoordYEnd();
+
 private:
     void drawPointsNames(QPainter *painter, const QVector<QLineF> &lines);
 

@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <QDebug>
 #include <QMatrix4x4>
+#include <QValueAxis>
 
 void Gasket::setABGH(double value)
 {
@@ -101,6 +102,18 @@ void Gasket::setAffineSystemWeights(float weight, int i)
 {
     affineSystemPoints_[i].first = weight;
     redraw();
+}
+
+QPointF Gasket::getCoordXEnd()
+{
+    auto xAxis = reinterpret_cast<QValueAxis *>(chart_->axisX());
+    return {x() +  xAxis->max()*k, y()};
+}
+
+QPointF Gasket::getCoordYEnd()
+{
+    auto yAxis = reinterpret_cast<QValueAxis *>(chart_->axisY());
+    return {x(), y() - yAxis->max()*k};
 }
 
 Gasket::Gasket(QChart *chart)
@@ -256,7 +269,9 @@ void Gasket::transformateDatail()
         chart_->setPos(pos());
         chart_->setTransform(affineT);
     }
-
+transformMatrix*=QTransform(1,0,0,
+                           0,1,0,
+                           0,0,1);
     setTransform(transformMatrix);
 }
 
@@ -264,8 +279,8 @@ void Gasket::drawSymetricLines(QPainter *painter, const QPointF &stP, const QVec
 {
     painter->setPen(QPen(Qt::black, 2, Qt::PenStyle::DashDotLine));
     //painter->drawRect(boundingRect()); //draw rectangle
-    //painter->drawEllipse(QRectF(pos().x()-5, pos().y()-5, 10, 10));
-    //painter->drawEllipse(QRectF(rotatePoint_.x()-5, rotatePoint_.y()-5, 10, 10));
+    painter->drawEllipse(QRectF(pos().x()-5, pos().y()-5, 10, 10));
+    painter->drawEllipse(QRectF(rotatePoint_.x()-5, rotatePoint_.y()-5, 10, 10));
 
     // draw symetric line
     QPointF t(stP.x() - 2*k, stP.y() + 50.*k/2.);

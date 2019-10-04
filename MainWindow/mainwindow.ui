@@ -573,7 +573,7 @@
         <item>
          <widget class="QLabel" name="label_13">
           <property name="text">
-           <string>Отступ по X</string>
+           <string>Дельта X</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -607,7 +607,7 @@
         <item>
          <widget class="QLabel" name="label_14">
           <property name="text">
-           <string>Отступ по Y</string>
+           <string>Дельта  Y</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -691,10 +691,10 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_9">
+           <widget class="QPushButton" name="pushButton">
             <property name="minimumSize">
              <size>
-              <width>150</width>
+              <width>0</width>
               <height>0</height>
              </size>
             </property>
@@ -705,12 +705,25 @@
              </font>
             </property>
             <property name="text">
-             <string>Аффины</string>
+             <string>Проективные</string>
             </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+            <property name="flat">
+             <bool>true</bool>
             </property>
            </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </item>
@@ -800,13 +813,13 @@
              <number>-500</number>
             </property>
             <property name="maximum">
-             <number>2000</number>
+             <number>3000</number>
             </property>
             <property name="pageStep">
              <number>100</number>
             </property>
             <property name="value">
-             <number>1000</number>
+             <number>2000</number>
             </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -819,13 +832,13 @@
              <number>-500</number>
             </property>
             <property name="maximum">
-             <number>2000</number>
+             <number>3000</number>
             </property>
             <property name="singleStep">
              <number>2</number>
             </property>
             <property name="value">
-             <number>1000</number>
+             <number>2000</number>
             </property>
            </widget>
           </item>
@@ -1312,6 +1325,22 @@
     <hint type="destinationlabel">
      <x>1202</x>
      <y>394</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>checkBox_2</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1123</x>
+     <y>285</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1054</x>
+     <y>285</y>
     </hint>
    </hints>
   </connection>
