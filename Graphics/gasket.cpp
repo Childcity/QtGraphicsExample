@@ -255,17 +255,17 @@ void Gasket::transformateDatail()
 
 
     if(isAffineEnabled_){
-        double Xx = affineSystemPoints_[0].second.x();
-        double Yx = affineSystemPoints_[0].second.y();
-        double Wx = static_cast<double>(affineSystemPoints_[0].first);
+        double Xy = affineSystemPoints_[0].second.x();
+        double Yy = affineSystemPoints_[0].second.y();
+        double Wy = static_cast<double>(affineSystemPoints_[0].first);
 
         double X0 = static_cast<double>(affineSystemPoints_[1].second.x());
         double Y0 = affineSystemPoints_[1].second.y();
         double W0 = static_cast<double>(affineSystemPoints_[1].first);
 
-        double Xy = affineSystemPoints_[2].second.x();
-        double Yy = affineSystemPoints_[2].second.y();
-        double Wy = static_cast<double>(affineSystemPoints_[2].first);
+        double Xx = affineSystemPoints_[2].second.x();
+        double Yx = affineSystemPoints_[2].second.y();
+        double Wx = static_cast<double>(affineSystemPoints_[2].first);
 
         auto affineT = QTransform(Xx*Wx,    Yx*Wx,          Wx,
                                  Xy*Wy,    Yy*Wy,          Wy,
@@ -275,21 +275,20 @@ void Gasket::transformateDatail()
         chart_->setPos(pos());
         chart_->setTransform(affineT);
     }
-transformMatrix*=QTransform(1,0,0,
-                           0,1,0,
-                           0,0,1);
+
     setTransform(transformMatrix);
 }
 
 void Gasket::drawSymetricLines(QPainter *painter, const QPointF &stP, const QVector<QPointF> &arc)
 {
     painter->setPen(QPen(Qt::black, 2, Qt::PenStyle::DashDotLine));
-    //painter->drawRect(boundingRect()); //draw rectangle
+    painter->drawRect(boundingRect()); //draw rectangle
     //painter->drawEllipse(QRectF(pos().x()-5, pos().y()-5, 10, 10));
     //painter->drawEllipse(QRectF(rotatePoint_.x()-5, rotatePoint_.y()-5, 10, 10));
     painter->drawEllipse(QRectF(0-5, 0-5, 10, 10));
-    painter->drawEllipse(QRectF(0-5, 50, 10, 10));
-    painter->drawEllipse(QRectF(50, 0, 10, 10));
+    painter->drawEllipse(QRectF(chart_->boundingRect().topRight().x()-500, chart_->boundingRect().topRight().y(), 10, 10));
+    painter->drawEllipse(QRectF(chart_->boundingRect().bottomLeft().x(), chart_->boundingRect().bottomLeft().y()-500, 10, 10));
+    painter->drawRect(mapRectFromItem(chart_, chart_->boundingRect()));
 
     // draw symetric line
     QPointF t(stP.x() - 2*k, stP.y() + 50.*k/2.);

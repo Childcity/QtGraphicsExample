@@ -77,14 +77,15 @@ MainWindow::MainWindow(QWidget *parent) :
         QVector<QPointF> deltas(3);
 
         for (int i = 0; i < affinePoints.size(); ++i) {
-            affinePoints[i] = new MovablePoint(6, Qt::green, {i+49}, chart_);
-
-            auto newPlace = QPointF(i==0 ? gasket_->getCoordXEnd() : i==1 ? gasket_->pos() : gasket_->getCoordYEnd());
+            affinePoints[i] = new MovablePoint(6, Qt::green, {i+49});
+            //auto newPlace = QPointF(i==0 ? gasket_->getCoordYEnd() : i==1 ? gasket_->pos() : gasket_->getCoordXEnd());
+            auto newPlace = i==0 ? gasket_->boundingRect().bottomLeft() : (i==1 ? gasket_->boundingRect().topLeft() : (gasket_->boundingRect().topRight()-QPointF(0,0)));
             mappedPoss[i] = affinePoints[i]->mapFromItem(gasket_, newPlace);
             deltas[i] = mappedPoss[i] - newPlace;
 
             connect(affinePoints[i], &MovablePoint::positionChanged, this, [=](const QPointF &value){ gasket_->setAffineSystemPoints(value - deltas[i], i); });
             affinePoints[i]->setPos(mappedPoss[i]);
+            //affinePoints[i]->hide();
         }
     //}
 
