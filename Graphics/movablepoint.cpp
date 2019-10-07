@@ -10,8 +10,8 @@ MovablePoint::MovablePoint(int radius, Qt::GlobalColor color, QString label, QGr
 {
     setRect(QRectF(-radius, -radius, 2*radius, 2*radius));
 
-    setAcceptHoverEvents(true);
-    setAcceptTouchEvents(true);
+//    setAcceptHoverEvents(true);
+//    setAcceptTouchEvents(true);
     //setFlag(QGraphicsItem::ItemIsSelectable, true);
     setFlag(QGraphicsItem::ItemIsMovable, true);
     setBrush(QBrush(color_, Qt::BrushStyle::SolidPattern));

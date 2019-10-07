@@ -8,6 +8,7 @@
 #include <QDebug>
 #include <QMatrix4x4>
 #include <QValueAxis>
+#include <QGraphicsScene>
 
 void Gasket::setABGH(double value)
 {
@@ -28,6 +29,7 @@ void Gasket::setWidth(double width)
 }
 
 void Gasket::redraw() {
+    chart_->scene()->setBackgroundBrush((QBrush(Qt::white, Qt::SolidPattern)));
     update();
     chart_->update();
 }
@@ -282,13 +284,16 @@ void Gasket::transformateDatail()
 void Gasket::drawSymetricLines(QPainter *painter, const QPointF &stP, const QVector<QPointF> &arc)
 {
     painter->setPen(QPen(Qt::black, 2, Qt::PenStyle::DashDotLine));
-    painter->drawRect(boundingRect()); //draw rectangle
+    //painter->drawRect(boundingRect()); //draw rectangle
     //painter->drawEllipse(QRectF(pos().x()-5, pos().y()-5, 10, 10));
     //painter->drawEllipse(QRectF(rotatePoint_.x()-5, rotatePoint_.y()-5, 10, 10));
-    painter->drawEllipse(QRectF(0-5, 0-5, 10, 10));
-    painter->drawEllipse(QRectF(chart_->boundingRect().topRight().x()-500, chart_->boundingRect().topRight().y(), 10, 10));
-    painter->drawEllipse(QRectF(chart_->boundingRect().bottomLeft().x(), chart_->boundingRect().bottomLeft().y()-500, 10, 10));
+    //painter->drawEllipse(QRectF(-5, -5, 10, 10));
+
+    //auto chartRect = mapRectFromItem(chart_, chart_->scene()->sceneRect());
+    //painter->drawEllipse(QRectF(chartRect.topRight().x()-10, chartRect.topRight().y(), 10, 10));
+    //painter->drawEllipse(QRectF(chartRect.bottomLeft().x(), chartRect.bottomLeft().y()-10, 10, 10));
     painter->drawRect(mapRectFromItem(chart_, chart_->boundingRect()));
+    //painter->drawRect(chartRect); //peinter rect
 
     // draw symetric line
     QPointF t(stP.x() - 2*k, stP.y() + 50.*k/2.);

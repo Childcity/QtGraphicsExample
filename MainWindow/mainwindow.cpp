@@ -69,38 +69,48 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
 
-
-    //{
-        // setting up affinePoints
-        QVector<MovablePoint::Ptr> affinePoints(3);
-        QVector<QPointF> mappedPoss(3);
-        QVector<QPointF> deltas(3);
-
-        for (int i = 0; i < affinePoints.size(); ++i) {
-            affinePoints[i] = new MovablePoint(6, Qt::green, {i+49});
-            //auto newPlace = QPointF(i==0 ? gasket_->getCoordYEnd() : i==1 ? gasket_->pos() : gasket_->getCoordXEnd());
-            auto newPlace = i==0 ? gasket_->boundingRect().bottomLeft() : (i==1 ? gasket_->boundingRect().topLeft() : (gasket_->boundingRect().topRight()-QPointF(0,0)));
-            mappedPoss[i] = affinePoints[i]->mapFromItem(gasket_, newPlace);
-            deltas[i] = mappedPoss[i] - newPlace;
-
-            connect(affinePoints[i], &MovablePoint::positionChanged, this, [=](const QPointF &value){ gasket_->setAffineSystemPoints(value - deltas[i], i); });
-            affinePoints[i]->setPos(mappedPoss[i]);
-            //affinePoints[i]->hide();
-        }
-    //}
-
-
-
     scene_ = ui_->chartView->scene();
     scene_->setBackgroundBrush((QBrush(Qt::white, Qt::SolidPattern)));
     scene_->addItem(gasket_);
 
+    {
+        // setting up affinePoints
+        QVector<MovablePoint::Ptr> affinePoints(3);
+        QVector<MovablePoint::Ptr> realPoints(3);
+        QVector<QPointF> deltas(3);
+
+        for (int i = 0; i < affinePoints.size(); ++i) {
+            realPoints[i] = new MovablePoint(15, Qt::yellow, {9+49}, chart_);
+            realPoints[i]->setFlag(QGraphicsItem::ItemIsMovable, false);
+            realPoints[i]->setAcceptedMouseButtons(Qt::MouseButton::NoButton);
+
+            affinePoints[i] = new MovablePoint(6, Qt::green, {i+49});
+            //auto newPlace = QPointF(i==0 ? gasket_->getCoordYEnd() : i==1 ? gasket_->pos() : gasket_->getCoordXEnd());
+            auto newPlace = i==0 ? gasket_->boundingRect().bottomLeft()
+                                 : i==1 ? gasket_->boundingRect().topLeft()
+                                        : gasket_->boundingRect().topRight();
+            const QPointF mappedPoss = affinePoints[i]->mapFromItem(gasket_, newPlace);
+            deltas[i] = mappedPoss - newPlace;
+
+            connect(affinePoints[i], &MovablePoint::positionChanged, this, [=](const QPointF &value){
+                gasket_->setAffineSystemPoints(value - deltas[i], i);
+
+                auto realPlace = i==0 ? chart_->boundingRect().bottomLeft()
+                                      : i==1 ? chart_->boundingRect().topLeft()
+                                             : chart_->boundingRect().topRight();
+                realPoints[i]->setPos(realPlace);
+                realPoints[i]->show();
+            });
+
+            affinePoints[i]->setPos(mappedPoss);
+            realPoints[i]->hide();
+            scene_->addItem(affinePoints[i]);
+        }
+    }
+
 //     next doesn't need, because if we provide parent for MovablePoint object (chart_), it automaticaly adds to scene_
 //     with chart_
 //    scene_->addItem(rotatePoint);
-    scene_->addItem(affinePoints[0]);
-    scene_->addItem(affinePoints[1]);
-    scene_->addItem(affinePoints[2]);
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event)
