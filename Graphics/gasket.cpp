@@ -120,7 +120,8 @@ Gasket::Gasket(QChart *chart)
     : chart_(chart)
 {
     // move to Start of XY coordinate system
-    setPos({chart_->pos().x() + 48, chart_->pos().y() + 170 + 142});
+    chartPos_ = chart_->pos();
+    setPos({chartPos_.x() + 48, chartPos_.y() + 170 + 142});
     rotatePoint_ = pos();
 }
 
@@ -231,6 +232,11 @@ void Gasket::transformateDatail()
     QMatrix4x4 transformationMatrix;
     QTransform transformMatrix;
 
+    {   // clear transformation of chart
+        chart_->setTransform(QTransform());
+        chart_->setPos(chartPos_);
+    }
+
     {
         float a    = static_cast<float>(M_PI/180. * rotateAncle_);
         float sina = sinf(a);
@@ -279,8 +285,11 @@ void Gasket::drawSymetricLines(QPainter *painter, const QPointF &stP, const QVec
 {
     painter->setPen(QPen(Qt::black, 2, Qt::PenStyle::DashDotLine));
     //painter->drawRect(boundingRect()); //draw rectangle
-    painter->drawEllipse(QRectF(pos().x()-5, pos().y()-5, 10, 10));
-    painter->drawEllipse(QRectF(rotatePoint_.x()-5, rotatePoint_.y()-5, 10, 10));
+    //painter->drawEllipse(QRectF(pos().x()-5, pos().y()-5, 10, 10));
+    //painter->drawEllipse(QRectF(rotatePoint_.x()-5, rotatePoint_.y()-5, 10, 10));
+    painter->drawEllipse(QRectF(0-5, 0-5, 10, 10));
+    painter->drawEllipse(QRectF(0-5, 50, 10, 10));
+    painter->drawEllipse(QRectF(50, 0, 10, 10));
 
     // draw symetric line
     QPointF t(stP.x() - 2*k, stP.y() + 50.*k/2.);
