@@ -29,9 +29,9 @@ void Gasket::setWidth(double width)
 }
 
 void Gasket::redraw() {
-    chart_->scene()->setBackgroundBrush((QBrush(Qt::white, Qt::SolidPattern)));
     update();
     chart_->update();
+    scene()->invalidate();
 }
 
 void Gasket::setArc8R(double value)
@@ -241,7 +241,8 @@ void Gasket::transformateDatail()
     QTransform transformMatrix;
 
     {   // clear transformation of chart
-        chart_->setTransform(QTransform());
+        setTransform(transformMatrix);
+        chart_->setTransform(transformMatrix);
         chart_->setPos(chartPos_);
     }
 
@@ -261,13 +262,12 @@ void Gasket::transformateDatail()
         transformMatrix = transformationMatrix.toTransform();
     }
 
-
     if(isProectiveEnabled_){
         double Xy = affineSystemPoints_[0].second.x();
         double Yy = affineSystemPoints_[0].second.y();
         double Wy = static_cast<double>(affineSystemPoints_[0].first);
 
-        double X0 = static_cast<double>(affineSystemPoints_[1].second.x());
+        double X0 = affineSystemPoints_[1].second.x();
         double Y0 = affineSystemPoints_[1].second.y();
         double W0 = static_cast<double>(affineSystemPoints_[1].first);
 
@@ -275,30 +275,29 @@ void Gasket::transformateDatail()
         double Yx = affineSystemPoints_[2].second.y();
         double Wx = static_cast<double>(affineSystemPoints_[2].first);
 
-        auto affineT = QTransform(Xx*Wx,    Yx*Wx,          Wx,
-                                 Xy*Wy,    Yy*Wy,          Wy,
-                                 X0*W0,    Y0*W0,          W0);
-        transformMatrix *= affineT;
+        const auto proectiveT = QTransform(Xx*Wx,    Yx*Wx,          Wx,
+                                         Xy*Wy,    Yy*Wy,          Wy,
+                                         X0*W0,    Y0*W0,          W0);
+        transformMatrix *= proectiveT;
 
         chart_->setPos(pos());
-        chart_->setTransform(affineT);
+        chart_->setTransform(proectiveT);
     }
 
-
-
     if(isAffineEnabled_){
-        double Xy = affineSystemPoints_[0].second.x();
-        double Yy = affineSystemPoints_[0].second.y();
+        double Xy = affineSystemPoints_[0].second.x()/300;
+        double Yy = affineSystemPoints_[0].second.y()/300;
 
-        double X0 = static_cast<double>(affineSystemPoints_[1].second.x());
-        double Y0 = affineSystemPoints_[1].second.y();
+        double X0 = affineSystemPoints_[1].second.x()/1000;
+        double Y0 = affineSystemPoints_[1].second.y()/1000;
 
-        double Xx = affineSystemPoints_[2].second.x();
-        double Yx = affineSystemPoints_[2].second.y();
 
-        auto affineT = QTransform(Xx,    Yx,         0,
-                                 Xy,    Yy,          0,
-                                 X0,    Y0,          1);
+        double Xx = affineSystemPoints_[2].second.x()/300;
+        double Yx = affineSystemPoints_[2].second.y()/300;
+
+        const auto affineT = QTransform(Xx,    Yx,          0,
+                                        Xy,    Yy,          0,
+                                        X0,    Y0,          1);
         transformMatrix *= affineT;
 
         chart_->setPos(pos());

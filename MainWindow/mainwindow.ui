@@ -1426,5 +1426,21 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>pushButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>checkBox_3</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1123</x>
+     <y>335</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1070</x>
+     <y>335</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
 </ui>

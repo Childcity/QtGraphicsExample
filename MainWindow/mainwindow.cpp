@@ -40,6 +40,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // create our Gasket object and add it to the scene
     gasket_ = new Gasket(chart_);
+    gasket_->setCacheMode(QGraphicsItem::NoCache);
+    chart_->setCacheMode(QGraphicsItem::NoCache);
 
     connect(ui_->checkBox, &QCheckBox::clicked, [=](bool value){ gasket_->setPointsNamesVisible(value); });
     connect(ui_->spinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setABGH(value); });
@@ -66,7 +68,7 @@ MainWindow::MainWindow(QWidget *parent) :
         QPointF mappedPos = rotatePoint->mapFromItem(gasket_, gasket_->pos());
         QPointF delta = mappedPos - gasket_->pos();
         rotatePoint->setPos(mappedPos);
-        connect(rotatePoint, &MovablePoint::positionChanged, this, [=](const QPointF &value){ ui_->checkBox_2->isChecked() ? gasket_->setRotatePoint(value) : gasket_->setRotatePoint(value - delta); });
+        connect(rotatePoint, &MovablePoint::positionChanged, this, [=](const QPointF &value){ ui_->checkBox_2->isChecked()||ui_->checkBox_3->isChecked() ? gasket_->setRotatePoint(value) : gasket_->setRotatePoint(value - delta); });
     }
 
 
@@ -88,7 +90,7 @@ MainWindow::MainWindow(QWidget *parent) :
             affinePoints[i] = new MovablePoint(6, Qt::green, {i+49});
             //auto newPlace = QPointF(i==0 ? gasket_->getCoordYEnd() : i==1 ? gasket_->pos() : gasket_->getCoordXEnd());
             auto newPlace = i==0 ? gasket_->boundingRect().bottomLeft()
-                                 : i==1 ? gasket_->boundingRect().topLeft()
+                                 : i==1 ? chart_->boundingRect().topLeft()
                                         : gasket_->boundingRect().topRight();
             const QPointF mappedPoss = affinePoints[i]->mapFromItem(gasket_, newPlace);
             deltas[i] = mappedPoss - newPlace;
@@ -100,11 +102,13 @@ MainWindow::MainWindow(QWidget *parent) :
                                       : i==1 ? chart_->boundingRect().topLeft()
                                              : chart_->boundingRect().topRight();
                 realPoints[i]->setPos(realPlace);
-                realPoints[i]->show();
+
+                // show yello proection of green points
+                if(ui_->checkBox_2->isChecked()) realPoints[i]->show();
+                else realPoints[i]->hide();
             });
 
             affinePoints[i]->setPos(mappedPoss);
-            realPoints[i]->hide();
             scene_->addItem(affinePoints[i]);
         }
     }
