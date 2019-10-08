@@ -34,6 +34,7 @@ private:
 
     // Affine
     bool isAffineEnabled_ = false;
+    bool isProectiveEnabled_ = false;
     QVector<QPair<float, QPointF>> affineSystemPoints_ = {
         QPair<float, QPointF>(10, {0, 0}),
         QPair<float, QPointF>(1000, {0, 0}),
@@ -77,6 +78,8 @@ public:
     void setRotatePoint(const QPointF &rotatePoint);
 
     void setIsAffineEnabled(bool isAffineEnabled);
+
+    void setIsProectiveEnabled(bool isProectiveEnabled);
 
     void setAffineSystemPoints(const QPointF &affineSystemPoint, int i);
 

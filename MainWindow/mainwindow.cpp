@@ -52,7 +52,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui_->spinBox_7, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setDE(value); });
     connect(ui_->spinBox_8, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setPB(value); });
     connect(ui_->spinBox_9, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setRotateAncle(value); });
-    connect(ui_->checkBox_2, &QCheckBox::clicked, [=](bool value){ gasket_->setIsAffineEnabled(value); });
+    connect(ui_->checkBox_2, &QCheckBox::clicked, [=](bool value){ gasket_->setIsProectiveEnabled(value); });
+    connect(ui_->checkBox_3, &QCheckBox::clicked, [=](bool value){ gasket_->setIsAffineEnabled(value); });
     connect(ui_->spinBox_11, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setAffineSystemWeights(value, 0); });
     connect(ui_->spinBox_12, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setAffineSystemWeights(value, 1); });
     connect(ui_->spinBox_13, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setAffineSystemWeights(value, 2); });
