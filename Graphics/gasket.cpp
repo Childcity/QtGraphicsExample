@@ -150,32 +150,40 @@ void Gasket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     Q_UNUSED(option); Q_UNUSED(widget);
 
     painter->setRenderHint(QPainter::Antialiasing);
-    QVector<QPointF> points;
 
-        double c = 100.;
+    const auto getLemniskataBerunuli = [](double c, QPointF delta){
+        QVector<QPointF> points;
         double startAngle = -200;
-        double endAngle = 200;
-        double phiStep = 0.03;
-
-
+        double endAngle = 250;
+        double phiStep = 0.01;
 
         int n = 0;
         for (double phi = startAngle; phi <= endAngle/* + (phiStep_ * 4)*/; phi += phiStep, n++) {
             double p = sqrt(tan(M_PI_4) - phi);
             double x = c * M_SQRT2 * (p + pow(p, 3)) / (1 + pow(p, 4));
             double y = c * M_SQRT2 * (p - pow(p, 3)) / (1 + pow(p, 4));
-            points += QPointF(x, y) + boundingRect().center();
+            points += QPointF(x, y) + delta;
 
             if(phi > startAngle && phi < endAngle)
                 if(n % 2 == 0){ // for filling spaces between dashed lines
-                    points += QPointF(x, y) + boundingRect().center();
+                    points += QPointF(x, y) + delta;
                     double p = sqrt(tan(M_PI_4) - (phi - phiStep));
                     double x = c * M_SQRT2 * (p + pow(p, 3)) / (1 + pow(p, 4));
                     double y = c * M_SQRT2 * (p - pow(p, 3)) / (1 + pow(p, 4));
-                    points += QPointF(x, y) + boundingRect().center();
+                    points += QPointF(x, y) + delta;
                 }
         }
-        painter->drawLines(points.constData(), points.length()/2);
+        return points;
+    };
+
+    QPointF stP = boundingRect().center();
+    QVector<QPointF> pointsLeft, pointsRight, points;
+    pointsLeft = getLemniskataBerunuli(-100, stP);
+    pointsRight = getLemniskataBerunuli(100, stP);
+    points = pointsLeft + QVector<QPointF>{pointsLeft[pointsLeft.length()-2], pointsRight[pointsRight.length()-2]} + pointsRight ;
+
+
+    painter->drawLines(points.constData(), points.length()/2);
     //drawGasket(painter);
 
     // draw border around chart/points etc...
