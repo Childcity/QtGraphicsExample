@@ -90,11 +90,15 @@ public:
     QPointF getCoordYEnd();
 
 private:
-    void drawPointsNames(QPainter *painter, const QVector<QLineF> &lines);
+    void transformateDatail();
+
+    void drawBorders(QPainter *painter);
 
     void drawSymetricLines(QPainter *painter, const QPointF &stP, const QVector<QPointF> &arc11);
 
-    void transformateDatail();
+    void drawGasket(QPainter *painter);
+
+    void drawPointsNames(QPainter *painter, const QVector<QLineF> &lines);
 };
 
 #endif // GASKET_H

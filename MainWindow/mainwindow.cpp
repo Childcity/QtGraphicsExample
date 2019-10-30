@@ -40,8 +40,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // create our Gasket object and add it to the scene
     gasket_ = new Gasket(chart_);
-    gasket_->setCacheMode(QGraphicsItem::NoCache);
-    chart_->setCacheMode(QGraphicsItem::NoCache);
 
     connect(ui_->checkBox, &QCheckBox::clicked, [=](bool value){ gasket_->setPointsNamesVisible(value); });
     connect(ui_->spinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setABGH(value); });
@@ -111,6 +109,12 @@ MainWindow::MainWindow(QWidget *parent) :
             affinePoints[i]->setPos(mappedPoss);
             scene_->addItem(affinePoints[i]);
         }
+    }
+
+    qDebug() <<ui_->verticalLayout_2->findChildren<QWidget *>().length();
+    for(auto&& child : ui_->verticalLayout_2->findChildren<QWidget *>()){
+        child->setEnabled(false);
+        child->dumpObjectInfo();
     }
 
 //     next doesn't need, because if we provide parent for MovablePoint object (chart_), it automaticaly adds to scene_

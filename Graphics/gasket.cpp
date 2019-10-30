@@ -148,89 +148,38 @@ QRectF Gasket::boundingRect() const
 void Gasket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(option); Q_UNUSED(widget);
-    using namespace Graphics;
 
-    //############### creating detail lines #################
-
-    QPointF stP = {boundingRect().topLeft().x()+margin, boundingRect().topLeft().y()+margin};
-    QPointF t; //tmp point
-
-
-    QLineF lAB(10*k, 0, AB_GH_*k, 0);
-    QLineF lBC(lAB.p2(), QPointF(lAB.p2().x(), lAB.p2().y() + ((50-CF_)/2)*k));
-
-
-    t.rx() = lAB.p2().x() - PB_*k;
-    t.ry() = lAB.p2().y() + (50./2. - DE_/2.)*k;
-    QLineF lCD(lBC.p2(), t);
-    QLineF lDE(t, QPointF(t.x(), t.y() + DE_*k));
-
-
-    QLineF lEF(lDE.p2(), QPointF(lBC.p2().x(), lAB.p2().y() + (50 - ((50-CF_)/2))*k));
-    QLineF lFG(lEF.p2(), QPointF(lEF.p2().x(), lAB.p2().y() + 50*k));
-    QLineF lGH(lFG.p2(), QPointF());
-
-
-    t.rx() = lFG.translated(stP).p2().x() - (AB_GH_-10)*k;
-    t.ry() = lFG.translated(stP).p2().y() - 10*k;
-    Arc arc(M_PI/2., M_PI, arc8R_*k, t);
-    QVector<QPointF> arc8 = arc.getPoints();
-    lGH.setP2(arc8.first() - stP);
-
-
-    t.rx() = (t-stP).x() - 10*k;
-    t.ry() = (t-stP).y();
-    QLineF lIJ(arc8.last() - stP, QPointF(t.x(), t.y() - 7.5*k));
-    QLineF lJK(lIJ.p2(), QPointF());
-
-
-    t.rx() = lIJ.translated(stP).p2().x() + 17*k;
-    t.ry() = lIJ.translated(stP).p2().y() - 7.5*k;
-    arc = Arc(-M_PI/1.25, M_PI/1.23, arc11R_*k, t);
-    QVector<QPointF> arc11 = arc.getPoints();
-    lJK.setP2(arc11.last() - stP);
-
-
-    t.rx() = lIJ.p2().x();
-    t.ry() = lIJ.p2().y() - 15*k;
-    QLineF lLM(t, arc11.first() - stP);
-    QLineF lMN(t, QPointF());
-
-
-    t.rx() = (t+stP).x() + 10*k;
-    t.ry() = (t+stP).y() - 7.5*k;
-    arc = Arc (-M_PI, -M_PI/2., arc13R_*k, t);
-    QVector<QPointF> arc13 = arc.getPoints();
-
-    lMN.setP2(arc13.first() - stP); // set end of MN to start of Arc
-    lAB.setP1(arc13.last() - stP); // set start of AB to end of Arc
-
-    QVector<QLineF> lines({
-                            lAB, lBC, lCD, lDE, lEF, lFG, lGH, lIJ, lJK, lLM, lMN
-                         });
-
-    for(auto &line : lines){
-        line.translate(stP);
-        //qDebug() <<line;
-    }
-
-
-    //############### drawing detail lines #################
     painter->setRenderHint(QPainter::Antialiasing);
+    QVector<QPointF> points;
 
-    // painting symetric lines
-    drawSymetricLines(painter, stP, arc11);
+        double c = 100.;
+        double startAngle = -200;
+        double endAngle = 200;
+        double phiStep = 0.03;
 
-    // painting lines
-    painter->setPen({Qt::red, 3});
-    painter->drawLines(lines);
-    painter->drawLines(arc8.data(), arc8.size()/2);
-    painter->drawLines(arc11.data(), arc11.size()/2);
-    painter->drawLines(arc13.data(), arc13.size()/2);
 
-    // painting text
-    if(isPointsNamesVisible_)
-        drawPointsNames(painter, lines);
+
+        int n = 0;
+        for (double phi = startAngle; phi <= endAngle/* + (phiStep_ * 4)*/; phi += phiStep, n++) {
+            double p = sqrt(tan(M_PI_4) - phi);
+            double x = c * M_SQRT2 * (p + pow(p, 3)) / (1 + pow(p, 4));
+            double y = c * M_SQRT2 * (p - pow(p, 3)) / (1 + pow(p, 4));
+            points += QPointF(x, y) + boundingRect().center();
+
+            if(phi > startAngle && phi < endAngle)
+                if(n % 2 == 0){ // for filling spaces between dashed lines
+                    points += QPointF(x, y) + boundingRect().center();
+                    double p = sqrt(tan(M_PI_4) - (phi - phiStep));
+                    double x = c * M_SQRT2 * (p + pow(p, 3)) / (1 + pow(p, 4));
+                    double y = c * M_SQRT2 * (p - pow(p, 3)) / (1 + pow(p, 4));
+                    points += QPointF(x, y) + boundingRect().center();
+                }
+        }
+        painter->drawLines(points.constData(), points.length()/2);
+    //drawGasket(painter);
+
+    // draw border around chart/points etc...
+    drawBorders(painter);
 
     transformateDatail();
 }
@@ -307,9 +256,9 @@ void Gasket::transformateDatail()
     setTransform(transformMatrix);
 }
 
-void Gasket::drawSymetricLines(QPainter *painter, const QPointF &stP, const QVector<QPointF> &arc)
+void Gasket::drawBorders(QPainter *painter)
 {
-    painter->setPen(QPen(Qt::black, 2, Qt::PenStyle::DashDotLine));
+    painter->setPen(QPen(Qt::black, 1, Qt::PenStyle::SolidLine));
     //painter->drawRect(boundingRect()); //draw rectangle
     //painter->drawEllipse(QRectF(pos().x()-5, pos().y()-5, 10, 10));
     //painter->drawEllipse(QRectF(rotatePoint_.x()-5, rotatePoint_.y()-5, 10, 10));
@@ -319,9 +268,14 @@ void Gasket::drawSymetricLines(QPainter *painter, const QPointF &stP, const QVec
     //painter->drawEllipse(QRectF(chartRect.topRight().x()-10, chartRect.topRight().y(), 10, 10));
     //painter->drawEllipse(QRectF(chartRect.bottomLeft().x(), chartRect.bottomLeft().y()-10, 10, 10));
     painter->drawRect(mapRectFromItem(chart_, chart_->boundingRect()));
+}
+
+void Gasket::drawSymetricLines(QPainter *painter, const QPointF &stP, const QVector<QPointF> &arc)
+{
     //painter->drawRect(chartRect); //peinter rect
 
     // draw symetric line
+    painter->setPen(QPen(Qt::black, 2, Qt::PenStyle::DashDotLine));
     QPointF t(stP.x() - 2*k, stP.y() + 50.*k/2.);
     painter->drawLine(t, QPointF(t.x() + AB_GH_*k + 4*k + (PB_<0 ? -PB_*k:0), t.y()));
 
@@ -331,6 +285,92 @@ void Gasket::drawSymetricLines(QPainter *painter, const QPointF &stP, const QVec
     double radius = arcTopPoint.y() - t.y();
     painter->drawLine(arcTopPoint, {arcTopPoint.x()
                                     , arcTopPoint.y() - 2 * radius});
+}
+
+void Gasket::drawGasket(QPainter *painter)
+{
+    using namespace Graphics;
+
+    //############### creating detail lines #################
+
+    QPointF stP = {boundingRect().topLeft().x()+margin, boundingRect().topLeft().y()+margin};
+    QPointF t; //tmp point
+
+
+    QLineF lAB(10*k, 0, AB_GH_*k, 0);
+    QLineF lBC(lAB.p2(), QPointF(lAB.p2().x(), lAB.p2().y() + ((50-CF_)/2)*k));
+
+
+    t.rx() = lAB.p2().x() - PB_*k;
+    t.ry() = lAB.p2().y() + (50./2. - DE_/2.)*k;
+    QLineF lCD(lBC.p2(), t);
+    QLineF lDE(t, QPointF(t.x(), t.y() + DE_*k));
+
+
+    QLineF lEF(lDE.p2(), QPointF(lBC.p2().x(), lAB.p2().y() + (50 - ((50-CF_)/2))*k));
+    QLineF lFG(lEF.p2(), QPointF(lEF.p2().x(), lAB.p2().y() + 50*k));
+    QLineF lGH(lFG.p2(), QPointF());
+
+
+    t.rx() = lFG.translated(stP).p2().x() - (AB_GH_-10)*k;
+    t.ry() = lFG.translated(stP).p2().y() - 10*k;
+    Arc arc(M_PI/2., M_PI, arc8R_*k, t);
+    QVector<QPointF> arc8 = arc.getPoints();
+    lGH.setP2(arc8.first() - stP);
+
+
+    t.rx() = (t-stP).x() - 10*k;
+    t.ry() = (t-stP).y();
+    QLineF lIJ(arc8.last() - stP, QPointF(t.x(), t.y() - 7.5*k));
+    QLineF lJK(lIJ.p2(), QPointF());
+
+
+    t.rx() = lIJ.translated(stP).p2().x() + 17*k;
+    t.ry() = lIJ.translated(stP).p2().y() - 7.5*k;
+    arc = Arc(-M_PI/1.25, M_PI/1.23, arc11R_*k, t);
+    QVector<QPointF> arc11 = arc.getPoints();
+    lJK.setP2(arc11.last() - stP);
+
+
+    t.rx() = lIJ.p2().x();
+    t.ry() = lIJ.p2().y() - 15*k;
+    QLineF lLM(t, arc11.first() - stP);
+    QLineF lMN(t, QPointF());
+
+
+    t.rx() = (t+stP).x() + 10*k;
+    t.ry() = (t+stP).y() - 7.5*k;
+    arc = Arc (-M_PI, -M_PI/2., arc13R_*k, t);
+    QVector<QPointF> arc13 = arc.getPoints();
+
+    lMN.setP2(arc13.first() - stP); // set end of MN to start of Arc
+    lAB.setP1(arc13.last() - stP); // set start of AB to end of Arc
+
+    QVector<QLineF> lines({
+                            lAB, lBC, lCD, lDE, lEF, lFG, lGH, lIJ, lJK, lLM, lMN
+                         });
+
+    for(auto &line : lines){
+        line.translate(stP);
+        //qDebug() <<line;
+    }
+
+
+    //############### drawing detail lines #################
+
+    // painting symetric lines
+    drawSymetricLines(painter, stP, arc11);
+
+    // painting lines
+    painter->setPen({Qt::red, 3});
+    painter->drawLines(lines);
+    painter->drawLines(arc8.data(), arc8.size()/2);
+    painter->drawLines(arc11.data(), arc11.size()/2);
+    painter->drawLines(arc13.data(), arc13.size()/2);
+
+    // painting text
+    if(isPointsNamesVisible_)
+        drawPointsNames(painter, lines);
 }
 
 void Gasket::drawPointsNames(QPainter *painter, const QVector<QLineF> &lines)
