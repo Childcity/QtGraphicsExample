@@ -145,6 +145,8 @@ QRectF Gasket::boundingRect() const
                   , 50*k + margin*2);
 }
 
+#include <algorithm>
+
 void Gasket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(option); Q_UNUSED(widget);
@@ -152,38 +154,80 @@ void Gasket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     painter->setRenderHint(QPainter::Antialiasing);
 
     const auto getLemniskataBerunuli = [](double c, QPointF delta){
-        QVector<QPointF> points;
-        double startAngle = -200;
-        double endAngle = 250;
-        double phiStep = 0.01;
+        QPair<QVector<double>, QVector<QPointF>> points;
+        double startAngle = -M_PI_4;
+        double endAngle = M_PI_4;
+        double phiStep = 0.1;
 
-        int n = 0;
-        for (double phi = startAngle; phi <= endAngle/* + (phiStep_ * 4)*/; phi += phiStep, n++) {
-            double p = sqrt(tan(M_PI_4) - phi);
-            double x = c * M_SQRT2 * (p + pow(p, 3)) / (1 + pow(p, 4));
-            double y = c * M_SQRT2 * (p - pow(p, 3)) / (1 + pow(p, 4));
-            points += QPointF(x, y) + delta;
+        for (double phi = startAngle; phi <= endAngle + phiStep; phi += phiStep) {
+            //double p = sqrt(tan(M_PI_4) - phi);
+            double x = c * M_SQRT2 * cos(phi) / (pow(sin(phi),2) + 1); //c * M_SQRT2 * (p + pow(p, 3)) / (1 + pow(p, 4));
+            double y = c * M_SQRT2 * cos(phi) * sin(phi) / (pow(sin(phi),2) + 1);//c * M_SQRT2 * (p - pow(p, 3)) / (1 + pow(p, 4));
 
-            if(phi > startAngle && phi < endAngle)
-                if(n % 2 == 0){ // for filling spaces between dashed lines
-                    points += QPointF(x, y) + delta;
-                    double p = sqrt(tan(M_PI_4) - (phi - phiStep));
-                    double x = c * M_SQRT2 * (p + pow(p, 3)) / (1 + pow(p, 4));
-                    double y = c * M_SQRT2 * (p - pow(p, 3)) / (1 + pow(p, 4));
-                    points += QPointF(x, y) + delta;
-                }
+            if(std::isnan(x) || std::isnan(y))
+                break;
+
+            points.first <<phi;
+            points.second << (QPointF(x, y) + delta);
+
+            int pLen = points.second.length();
+            if(pLen > 2 && pLen % 2 != 0){
+                points.second << points.second.at(pLen-2) << points.second.at(pLen-1);
+                points.first << points.first.at(pLen-2) << points.first.at(pLen-1);
+            }
         }
+
         return points;
     };
 
     QPointF stP = boundingRect().center();
-    QVector<QPointF> pointsLeft, pointsRight, points;
-    pointsLeft = getLemniskataBerunuli(-100, stP);
-    pointsRight = getLemniskataBerunuli(100, stP);
-    points = pointsLeft + QVector<QPointF>{pointsLeft[pointsLeft.length()-2], pointsRight[pointsRight.length()-2]} + pointsRight ;
+    const auto points = getLemniskataBerunuli(120, stP);
+    painter->drawLines(points.second.constData(), points.second.length()/2);
+    qDebug() <<points.second <<endl<<endl;
+
+    double Mx = 373.026,
+            My = 173.227;
+
+    const auto realMxMy = std::find_if(points.second.constBegin(), points.second.constEnd(), [&](const QPointF &p){
+        return fabs(p.x() - Mx) < 0.01 && fabs(p.y() - My) < 0.01;
+    });
+
+    if(realMxMy != points.second.end()){
+        qDebug() <<*realMxMy;
+
+        int posMxMy = points.second.indexOf(*realMxMy);
+        double phi = points.first[posMxMy];
 
 
-    painter->drawLines(points.constData(), points.length()/2);
+        //y = kx + b
+        //b = My - k*Mx
+        //y = kx + (My - k*Mx)
+        //y = k * (x - x0) + y0
+
+        double k = -(1. / tan(3.*phi)); //производная Лемнискаты Бернули = −ctg(3*θ)
+
+        double x1 = -1., y1 = k * (x1 - Mx) + My;//k*x1 + (My - k*Mx);
+        double x2 = 1., y2 = k * (x2 - Mx) + My; //k*x2 + (My - k*Mx);
+
+        auto line = QLineF(x1, y1, x2, y2);
+        qDebug() <<"phi"<< phi << " " <<k << " " <<line;
+        painter->drawLine(line.translated(stP));
+    }
+
+//QPointF(339.102,223.604)  p= 0.4
+
+    //pointsRight = getLemniskataBerunuli(100, stP);
+
+    //qDebug() <<pointsLeft;
+    //painter->drawEllipse(QRectF(pointsLeft[pointsLeft.length()-2].x()-5, pointsLeft[pointsLeft.length()-2].y()-5, 10, 10));
+
+    //painter->drawLines(pointsRight.constData(), pointsRight.length()/2);
+
+//    painter->setPen(QPen(Qt::black, 1, Qt::PenStyle::SolidLine));
+//    painter->drawLine(pointsLeft.last(), pointsRight.last());
+
+//    painter->setPen(QPen(Qt::black, 2, Qt::PenStyle::SolidLine));
+//    painter->drawLine(pointsLeft.first(), pointsRight.first());
     //drawGasket(painter);
 
     // draw border around chart/points etc...

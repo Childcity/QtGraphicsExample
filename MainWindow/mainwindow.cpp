@@ -111,10 +111,10 @@ MainWindow::MainWindow(QWidget *parent) :
         }
     }
 
-    qDebug() <<ui_->verticalLayout_2->findChildren<QWidget *>().length();
+    //qDebug() <<ui_->verticalLayout_2->findChildren<QWidget *>().length();
     for(auto&& child : ui_->verticalLayout_2->findChildren<QWidget *>()){
         child->setEnabled(false);
-        child->dumpObjectInfo();
+        //child->dumpObjectInfo();
     }
 
 //     next doesn't need, because if we provide parent for MovablePoint object (chart_), it automaticaly adds to scene_
