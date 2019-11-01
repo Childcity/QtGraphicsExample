@@ -155,8 +155,8 @@ void Gasket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 
     const auto getLemniskataBerunuli = [](double c, QPointF delta){
         QPair<QVector<double>, QVector<QPointF>> points;
-        double startAngle = -M_PI_4;
-        double endAngle = M_PI_4;
+        double startAngle = 0;
+        double endAngle = 2*M_PI;
         double phiStep = 0.1;
 
         for (double phi = startAngle; phi <= endAngle + phiStep; phi += phiStep) {
@@ -181,37 +181,37 @@ void Gasket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     };
 
     QPointF stP = boundingRect().center();
-    const auto points = getLemniskataBerunuli(120, stP);
+    const auto points = getLemniskataBerunuli(120., stP);
     painter->drawLines(points.second.constData(), points.second.length()/2);
     qDebug() <<points.second <<endl<<endl;
 
-    double Mx = 373.026,
-            My = 173.227;
+    double Mx = 324.472,
+            My = 228.807;
 
     const auto realMxMy = std::find_if(points.second.constBegin(), points.second.constEnd(), [&](const QPointF &p){
         return fabs(p.x() - Mx) < 0.01 && fabs(p.y() - My) < 0.01;
     });
 
     if(realMxMy != points.second.end()){
-        qDebug() <<*realMxMy;
-
         int posMxMy = points.second.indexOf(*realMxMy);
         double phi = points.first[posMxMy];
 
+        // касательная
+        // y = k * (x - x0) + y0
 
-        //y = kx + b
-        //b = My - k*Mx
-        //y = kx + (My - k*Mx)
-        //y = k * (x - x0) + y0
+        double cSQRT_2 = 120. * M_SQRT2;
+        double dx = ((cSQRT_2 * sin(phi)) * (sin(phi)*sin(phi) + 2.*cos(phi)*cos(phi) + 1.)) / pow(sin(phi)*sin(phi) + 1., 2);
+        double dy = (cos(phi)*cos(phi) * (cSQRT_2 - cSQRT_2 * sin(phi)*sin(phi)) - cSQRT_2 * pow(sin(phi), 4) - cSQRT_2*sin(phi)*sin(phi))                \
+                    / pow(sin(phi)*sin(phi) + 1., 2);
 
-        double k = -(1. / tan(3.*phi)); //производная Лемнискаты Бернули = −ctg(3*θ)
+        double k = -dy/dx /** (phi>M_PI_4 ? -1 : 1)*/; //производная Лемнискаты Бернули
 
-        double x1 = -1., y1 = k * (x1 - Mx) + My;//k*x1 + (My - k*Mx);
-        double x2 = 1., y2 = k * (x2 - Mx) + My; //k*x2 + (My - k*Mx);
+        double x1 = -1000., y1 = k * (x1 - Mx) + My;//k*x1 + (My - k*Mx);
+        double x2 = 1000., y2 = k * (x2 - Mx) + My; //k*x2 + (My - k*Mx);
 
-        auto line = QLineF(x1, y1, x2, y2);
-        qDebug() <<"phi"<< phi << " " <<k << " " <<line;
-        painter->drawLine(line.translated(stP));
+        painter->drawEllipse(QRectF(Mx-5, My-5, 10, 10));
+        painter->drawLine(QLineF(x1, y1, x2, y2));
+        qDebug() <<QLineF(x1, y1, x2, y2);
     }
 
 //QPointF(339.102,223.604)  p= 0.4
