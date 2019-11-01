@@ -3,35 +3,18 @@
 
 #include <QPainter>
 #include <QPen>
-#include <QWidget>
-#include <algorithm>
 #include <QDebug>
-#include <QMatrix4x4>
-#include <QValueAxis>
-#include <QGraphicsScene>
+
+void Gasket::redraw() {
+    GraphicsItemBase::redraw();
+    update();
+}
+
 
 void Gasket::setABGH(double value)
 {
     AB_GH_ = value;
     redraw();
-}
-
-void Gasket::setHeight(double value)
-{
-    height_ = value;
-    redraw();
-}
-
-void Gasket::setWidth(double width)
-{
-    width_ = width;
-    redraw();
-}
-
-void Gasket::redraw() {
-    update();
-    chart_->update();
-    scene()->invalidate();
 }
 
 void Gasket::setArc8R(double value)
@@ -76,256 +59,49 @@ void Gasket::setPB(double BP)
     redraw();
 }
 
-void Gasket::setRotateAncle(double rotateAncle)
-{
-    rotateAncle_ = rotateAncle;
-    redraw();
-}
-
-void Gasket::setRotatePoint(const QPointF &rotatePoint)
-{
-    rotatePoint_ = rotatePoint;
-    redraw();
-}
-
-void Gasket::setIsAffineEnabled(bool isAffineEnabled)
-{
-    isAffineEnabled_ = isAffineEnabled;
-    redraw();
-}
-
-void Gasket::setIsProectiveEnabled(bool isProectiveEnabled)
-{
-    isProectiveEnabled_ = isProectiveEnabled;
-    redraw();
-}
-
-void Gasket::setAffineSystemPoints(const QPointF &affineSystemPoint, int i)
-{
-    affineSystemPoints_[i].second = affineSystemPoint;
-    redraw();
-}
-
-void Gasket::setAffineSystemWeights(float weight, int i)
-{
-    affineSystemPoints_[i].first = weight;
-    redraw();
-}
-
-QPointF Gasket::getCoordXEnd()
-{
-    auto xAxis = reinterpret_cast<QValueAxis *>(chart_->axisX());
-    return {x() +  xAxis->max()*k, y()};
-}
-
-QPointF Gasket::getCoordYEnd()
-{
-    auto yAxis = reinterpret_cast<QValueAxis *>(chart_->axisY());
-    return {x(), y() - yAxis->max()*k};
-}
-
-Gasket::Gasket(QChart *chart)
-    : chart_(chart)
-{
-    // move to Start of XY coordinate system
-    chartPos_ = chart_->pos();
-    setPos({chartPos_.x() + 48, chartPos_.y() + 170 + 142});
-    rotatePoint_ = pos();
-}
+Gasket::Gasket(QChart *chart, Transformation *transformation)
+    : GraphicsItemBase (chart, transformation)
+{}
 
 Gasket::~Gasket(){}
 
 QRectF Gasket::boundingRect() const
 {
     // outer most edges
-    //QPointF bootomLeft = chart_->plotArea().bottomLeft();
-    return QRectF(x()-margin + width_*k + (isProectiveEnabled_||isAffineEnabled_ ? affineXYDelta.x()*k : 0)
-                  , y()-margin - 50*k - height_*k + (isProectiveEnabled_||isAffineEnabled_ ? affineXYDelta.y()*k : 0)//50 - detail width
+    double xDelta = transformation_->getDeltaWidth()*k
+            + (transformation_->isProectiveEnabled() || transformation_->isAffineEnabled()
+               ? affineXYDelta.x()*k
+               : 0);
+
+    double yDelta = transformation_->getDeltaHeight()*k
+            - (transformation_->isProectiveEnabled() || transformation_->isAffineEnabled()
+               ? affineXYDelta.y()*k
+               : 0);
+
+
+    return QRectF(x()-margin + xDelta
+                  , y()-margin - 50*k - yDelta//50 - detail width
                   , (AB_GH_ + (PB_<0?-PB_:0))*k + margin*2 // if PB is longer then AB -> boundingRect should be extended till PB ends
                   , 50*k + margin*2);
 }
 
-#include <algorithm>
-
 void Gasket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    Q_UNUSED(option); Q_UNUSED(widget);
+    GraphicsItemBase::paint(painter, option, widget);
 
-    painter->setRenderHint(QPainter::Antialiasing);
-
-    const auto getLemniskataBerunuli = [](double c, QPointF delta){
-        QPair<QVector<double>, QVector<QPointF>> points;
-        double startAngle = 0;
-        double endAngle = 2*M_PI;
-        double phiStep = 0.1;
-
-        for (double phi = startAngle; phi <= endAngle + phiStep; phi += phiStep) {
-            //double p = sqrt(tan(M_PI_4) - phi);
-            double x = c * M_SQRT2 * cos(phi) / (pow(sin(phi),2) + 1); //c * M_SQRT2 * (p + pow(p, 3)) / (1 + pow(p, 4));
-            double y = c * M_SQRT2 * cos(phi) * sin(phi) / (pow(sin(phi),2) + 1);//c * M_SQRT2 * (p - pow(p, 3)) / (1 + pow(p, 4));
-
-            if(std::isnan(x) || std::isnan(y))
-                break;
-
-            points.first <<phi;
-            points.second << (QPointF(x, y) + delta);
-
-            int pLen = points.second.length();
-            if(pLen > 2 && pLen % 2 != 0){
-                points.second << points.second.at(pLen-2) << points.second.at(pLen-1);
-                points.first << points.first.at(pLen-2) << points.first.at(pLen-1);
-            }
-        }
-
-        return points;
-    };
-
-    QPointF stP = boundingRect().center();
-    const auto points = getLemniskataBerunuli(120., stP);
-    painter->drawLines(points.second.constData(), points.second.length()/2);
-    qDebug() <<points.second <<endl<<endl;
-
-    double Mx = 324.472,
-            My = 228.807;
-
-    const auto realMxMy = std::find_if(points.second.constBegin(), points.second.constEnd(), [&](const QPointF &p){
-        return fabs(p.x() - Mx) < 0.01 && fabs(p.y() - My) < 0.01;
-    });
-
-    if(realMxMy != points.second.end()){
-        int posMxMy = points.second.indexOf(*realMxMy);
-        double phi = points.first[posMxMy];
-
-        // касательная
-        // y = k * (x - x0) + y0
-
-        double cSQRT_2 = 120. * M_SQRT2;
-        double dx = ((cSQRT_2 * sin(phi)) * (sin(phi)*sin(phi) + 2.*cos(phi)*cos(phi) + 1.)) / pow(sin(phi)*sin(phi) + 1., 2);
-        double dy = (cos(phi)*cos(phi) * (cSQRT_2 - cSQRT_2 * sin(phi)*sin(phi)) - cSQRT_2 * pow(sin(phi), 4) - cSQRT_2*sin(phi)*sin(phi))                \
-                    / pow(sin(phi)*sin(phi) + 1., 2);
-
-        double k = -dy/dx /** (phi>M_PI_4 ? -1 : 1)*/; //производная Лемнискаты Бернули
-
-        double x1 = -1000., y1 = k * (x1 - Mx) + My;//k*x1 + (My - k*Mx);
-        double x2 = 1000., y2 = k * (x2 - Mx) + My; //k*x2 + (My - k*Mx);
-
-        painter->drawEllipse(QRectF(Mx-5, My-5, 10, 10));
-        painter->drawLine(QLineF(x1, y1, x2, y2));
-        qDebug() <<QLineF(x1, y1, x2, y2);
-    }
-
-//QPointF(339.102,223.604)  p= 0.4
-
-    //pointsRight = getLemniskataBerunuli(100, stP);
-
-    //qDebug() <<pointsLeft;
-    //painter->drawEllipse(QRectF(pointsLeft[pointsLeft.length()-2].x()-5, pointsLeft[pointsLeft.length()-2].y()-5, 10, 10));
-
-    //painter->drawLines(pointsRight.constData(), pointsRight.length()/2);
-
-//    painter->setPen(QPen(Qt::black, 1, Qt::PenStyle::SolidLine));
-//    painter->drawLine(pointsLeft.last(), pointsRight.last());
-
-//    painter->setPen(QPen(Qt::black, 2, Qt::PenStyle::SolidLine));
-//    painter->drawLine(pointsLeft.first(), pointsRight.first());
     //drawGasket(painter);
-
-    // draw border around chart/points etc...
-    drawBorders(painter);
 
     transformateDatail();
 }
 
 void Gasket::transformateDatail()
 {
-    QMatrix4x4 transformationMatrix;
-    QTransform transformMatrix;
-
-    {   // clear transformation of chart
-        setTransform(transformMatrix);
-        chart_->setTransform(transformMatrix);
-        chart_->setPos(chartPos_);
-    }
-
-    {
-        float a    = static_cast<float>(M_PI/180. * rotateAncle_);
-        float sina = sinf(a);
-        float cosa = cosf(a);
-        float centerX = static_cast<float>(rotatePoint_.x());
-        float centerY = static_cast<float>(rotatePoint_.y());
-
-        // rotate about Z and translate
-        transformationMatrix = QMatrix4x4(cosa,   sina,   0,    centerX - cosa*centerX - sina*centerY,
-                                         -sina,   cosa,   0,   centerY - -sina*centerX - cosa*centerY,
-                                          0,       0,     1,   0,
-                                          0,       0,     0,   1);
-
-        transformMatrix = transformationMatrix.toTransform();
-    }
-
-    if(isProectiveEnabled_){
-        double Xy = affineSystemPoints_[0].second.x();
-        double Yy = affineSystemPoints_[0].second.y();
-        double Wy = static_cast<double>(affineSystemPoints_[0].first);
-
-        double X0 = affineSystemPoints_[1].second.x();
-        double Y0 = affineSystemPoints_[1].second.y();
-        double W0 = static_cast<double>(affineSystemPoints_[1].first);
-
-        double Xx = affineSystemPoints_[2].second.x();
-        double Yx = affineSystemPoints_[2].second.y();
-        double Wx = static_cast<double>(affineSystemPoints_[2].first);
-
-        const auto proectiveT = QTransform(Xx*Wx,    Yx*Wx,          Wx,
-                                         Xy*Wy,    Yy*Wy,          Wy,
-                                         X0*W0,    Y0*W0,          W0);
-        transformMatrix *= proectiveT;
-
-        chart_->setPos(pos());
-        chart_->setTransform(proectiveT);
-    }
-
-    if(isAffineEnabled_){
-        double Xy = affineSystemPoints_[0].second.x()/300;
-        double Yy = affineSystemPoints_[0].second.y()/300;
-
-        double X0 = affineSystemPoints_[1].second.x()/1000;
-        double Y0 = affineSystemPoints_[1].second.y()/1000;
-
-
-        double Xx = affineSystemPoints_[2].second.x()/300;
-        double Yx = affineSystemPoints_[2].second.y()/300;
-
-        const auto affineT = QTransform(Xx,    Yx,          0,
-                                        Xy,    Yy,          0,
-                                        X0,    Y0,          1);
-        transformMatrix *= affineT;
-
-        chart_->setPos(pos());
-        chart_->setTransform(affineT);
-    }
-
-    setTransform(transformMatrix);
-}
-
-void Gasket::drawBorders(QPainter *painter)
-{
-    painter->setPen(QPen(Qt::black, 1, Qt::PenStyle::SolidLine));
-    //painter->drawRect(boundingRect()); //draw rectangle
-    //painter->drawEllipse(QRectF(pos().x()-5, pos().y()-5, 10, 10));
-    //painter->drawEllipse(QRectF(rotatePoint_.x()-5, rotatePoint_.y()-5, 10, 10));
-    //painter->drawEllipse(QRectF(-5, -5, 10, 10));
-
-    //auto chartRect = mapRectFromItem(chart_, chart_->scene()->sceneRect());
-    //painter->drawEllipse(QRectF(chartRect.topRight().x()-10, chartRect.topRight().y(), 10, 10));
-    //painter->drawEllipse(QRectF(chartRect.bottomLeft().x(), chartRect.bottomLeft().y()-10, 10, 10));
-    painter->drawRect(mapRectFromItem(chart_, chart_->boundingRect()));
+    GraphicsItemBase::transformateDatail();
+    setTransform(transformation_->getTransformation().first);
 }
 
 void Gasket::drawSymetricLines(QPainter *painter, const QPointF &stP, const QVector<QPointF> &arc)
 {
-    //painter->drawRect(chartRect); //peinter rect
-
     // draw symetric line
     painter->setPen(QPen(Qt::black, 2, Qt::PenStyle::DashDotLine));
     QPointF t(stP.x() - 2*k, stP.y() + 50.*k/2.);

@@ -38,25 +38,30 @@ MainWindow::MainWindow(QWidget *parent) :
     ui_->chartView->setRenderHint(QPainter::Antialiasing);
     ui_->chartView->setChart(chart_);
 
+    transformation_ = new Transformation();
+
     // create our Gasket object and add it to the scene
-    gasket_ = new Gasket(chart_);
+    gasket_ = new Gasket(chart_, transformation_);
+    bLemniscat_ = new BernoulliLemniscate(chart_, transformation_);
 
     connect(ui_->checkBox, &QCheckBox::clicked, [=](bool value){ gasket_->setPointsNamesVisible(value); });
     connect(ui_->spinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setABGH(value); });
-    connect(ui_->spinBox_2, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setHeight(value); });
-    connect(ui_->spinBox_10, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setWidth(value); });
     connect(ui_->spinBox_5, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setArc13R(value); });
     connect(ui_->spinBox_6, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setArc8R(value); });
     connect(ui_->spinBox_3, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setArc11R(value); });
     connect(ui_->spinBox_4, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setCF(value); });
     connect(ui_->spinBox_7, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setDE(value); });
     connect(ui_->spinBox_8, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setPB(value); });
-    connect(ui_->spinBox_9, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setRotateAncle(value); });
-    connect(ui_->checkBox_2, &QCheckBox::clicked, [=](bool value){ gasket_->setIsProectiveEnabled(value); });
-    connect(ui_->checkBox_3, &QCheckBox::clicked, [=](bool value){ gasket_->setIsAffineEnabled(value); });
-    connect(ui_->spinBox_11, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setAffineSystemWeights(value, 0); });
-    connect(ui_->spinBox_12, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setAffineSystemWeights(value, 1); });
-    connect(ui_->spinBox_13, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setAffineSystemWeights(value, 2); });
+
+    // Transformation buttons
+    connect(ui_->spinBox_2, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation_->setDeltaHeight(value); redraw(); });
+    connect(ui_->spinBox_10, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation_->setDeltaWidth(value); redraw();  });
+    connect(ui_->spinBox_9, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation_->setRotateAncle(value); redraw();  });
+    connect(ui_->checkBox_2, &QCheckBox::clicked, [=](bool value){ transformation_->setProectiveEnabled(value); redraw();  });
+    connect(ui_->checkBox_3, &QCheckBox::clicked, [=](bool value){ transformation_->setAffineEnabled(value); redraw();  });
+    connect(ui_->spinBox_11, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation_->setAffineSystemWeight(value, 0); redraw(); });
+    connect(ui_->spinBox_12, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation_->setAffineSystemWeight(value, 1); redraw(); });
+    connect(ui_->spinBox_13, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation_->setAffineSystemWeight(value, 2); redraw(); });
 
 
     {
@@ -66,13 +71,21 @@ MainWindow::MainWindow(QWidget *parent) :
         QPointF mappedPos = rotatePoint->mapFromItem(gasket_, gasket_->pos());
         QPointF delta = mappedPos - gasket_->pos();
         rotatePoint->setPos(mappedPos);
-        connect(rotatePoint, &MovablePoint::positionChanged, this, [=](const QPointF &value){ ui_->checkBox_2->isChecked()||ui_->checkBox_3->isChecked() ? gasket_->setRotatePoint(value) : gasket_->setRotatePoint(value - delta); });
+
+        transformation_->setRotatePoint(gasket_->pos());
+        connect(rotatePoint, &MovablePoint::positionChanged, this, [=](const QPointF &value){
+            ui_->checkBox_2->isChecked()||ui_->checkBox_3->isChecked()
+                    ? transformation_->setRotatePoint(value)
+                    : transformation_->setRotatePoint(value - delta);
+            redraw();
+        });
     }
 
 
     scene_ = ui_->chartView->scene();
-    scene_->setBackgroundBrush((QBrush(Qt::white, Qt::SolidPattern)));
+    scene_->setBackgroundBrush(QBrush(Qt::white, Qt::SolidPattern));
     scene_->addItem(gasket_);
+    scene_->addItem(bLemniscat_);
 
     {
         // setting up affinePoints
@@ -94,7 +107,8 @@ MainWindow::MainWindow(QWidget *parent) :
             deltas[i] = mappedPoss - newPlace;
 
             connect(affinePoints[i], &MovablePoint::positionChanged, this, [=](const QPointF &value){
-                gasket_->setAffineSystemPoints(value - deltas[i], i);
+                transformation_->setAffineSystemPoint(value - deltas[i], i);
+                redraw();
 
                 auto realPlace = i==0 ? chart_->boundingRect().bottomLeft()
                                       : i==1 ? chart_->boundingRect().topLeft()
@@ -111,12 +125,6 @@ MainWindow::MainWindow(QWidget *parent) :
         }
     }
 
-    //qDebug() <<ui_->verticalLayout_2->findChildren<QWidget *>().length();
-    for(auto&& child : ui_->verticalLayout_2->findChildren<QWidget *>()){
-        child->setEnabled(false);
-        //child->dumpObjectInfo();
-    }
-
 //     next doesn't need, because if we provide parent for MovablePoint object (chart_), it automaticaly adds to scene_
 //     with chart_
 //    scene_->addItem(rotatePoint);
@@ -124,7 +132,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::resizeEvent(QResizeEvent* event)
 {
-   QMainWindow::resizeEvent(event);
+    QMainWindow::resizeEvent(event);
+}
+
+void MainWindow::redraw()
+{
+    gasket_->redraw();
+    //bLemniscat_->redraw();
 }
 
 MainWindow::~MainWindow()
@@ -132,4 +146,5 @@ MainWindow::~MainWindow()
     delete ui_;
     delete gasket_;
     chart_->deleteLater();
+    delete transformation_;
 }

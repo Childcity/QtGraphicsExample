@@ -18,7 +18,10 @@ SOURCES += \
 	Graphics/figure.cpp \
 	Graphics/circle.cpp \
     Graphics/arc.cpp \
-    Graphics/movablepoint.cpp
+    Graphics/movablepoint.cpp \
+    Graphics/transformation.cpp \
+    Graphics/bernoullilemniscate.cpp \
+    Graphics/graphicsitembase.cpp
 
 HEADERS += \
 	MainWindow/mainwindow.h \
@@ -26,7 +29,10 @@ HEADERS += \
 	Graphics/figure.h \
 	Graphics/circle.h \
     Graphics/arc.h \
-	Graphics/movablepoint.h
+	Graphics/movablepoint.h \
+    Graphics/transformation.h \
+    Graphics/bernoullilemniscate.h \
+    Graphics/graphicsitembase.h
 
 FORMS += \
     MainWindow/mainwindow.ui
