@@ -35,6 +35,7 @@ void GraphicsItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *
     painter->save();
     {
         painter->setPen(QPen(Qt::black, 1, Qt::PenStyle::SolidLine));
+        scene()->setBackgroundBrush(QBrush(Qt::white, Qt::SolidPattern));
         //painter->drawRect(boundingRect()); //draw rectangle
         //painter->drawEllipse(QRectF(pos().x()-5, pos().y()-5, 10, 10));
         //painter->drawEllipse(QRectF(rotatePoint_.x()-5, rotatePoint_.y()-5, 10, 10));

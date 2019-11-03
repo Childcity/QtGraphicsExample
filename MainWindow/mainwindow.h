@@ -25,10 +25,13 @@ public:
     ~MainWindow() override;
 
 protected:
+    bool eventFilter(QObject *obj, QEvent *event) override;
+
     void resizeEvent(QResizeEvent* event) override;
 
 private:
     void redraw();
+    void setAnimation();
 
 private:
     Ui::MainWindow *ui_;
@@ -37,6 +40,7 @@ private:
     Gasket *gasket_;
     BernoulliLemniscate *bLemniscat_;
     Transformation *transformation_;
+    QTimer *animationInterval_;
 };
 
 #endif // MAINWINDOW_H

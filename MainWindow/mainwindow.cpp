@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui_(new Ui::MainWindow)
 {
     ui_->setupUi(this);
+    ui_->tabWidget->setCurrentIndex(0);
 
     chart_ = new QChart();
     chart_->setParent(this);
@@ -53,6 +54,16 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui_->spinBox_7, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setDE(value); });
     connect(ui_->spinBox_8, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setPB(value); });
 
+    connect(ui_->spinBox_14, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ bLemniscat_->setFocus(value); });
+    connect(ui_->checkBox_4, &QCheckBox::clicked, this, [=](bool value){ if(value) animationInterval_->start(); else animationInterval_->stop(); });
+    connect(bLemniscat_, &BernoulliLemniscate::sigCurvatureRadiusChanged, this, [=](double curvRadius){ ui_->label_22->setText(QString("%1 (deg)").arg((curvRadius*180.)/M_PI)); });
+    connect(bLemniscat_, &BernoulliLemniscate::sigFocusChanged, this, [=](double focus){
+        ui_->spinBox_14->setValue(static_cast<int>(focus));
+        ui_->label_29->setText(QString("%1 (mm)").arg(bLemniscat_->getArea()));
+        ui_->label_30->setText(QString("%1 (mm)").arg(bLemniscat_->getArea()/2.));
+        ui_->label_31->setText(QString("%1 (mm)").arg(bLemniscat_->getLength()));
+    });
+
     // Transformation buttons
     connect(ui_->spinBox_2, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation_->setDeltaHeight(value); redraw(); });
     connect(ui_->spinBox_10, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation_->setDeltaWidth(value); redraw();  });
@@ -62,6 +73,15 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui_->spinBox_11, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation_->setAffineSystemWeight(value, 0); redraw(); });
     connect(ui_->spinBox_12, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation_->setAffineSystemWeight(value, 1); redraw(); });
     connect(ui_->spinBox_13, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation_->setAffineSystemWeight(value, 2); redraw(); });
+    connect(ui_->tabWidget, &QTabWidget::tabBarClicked, this, [=](int index){
+        if(index == 0){
+            bLemniscat_->hide();
+            gasket_->show();
+        }else{
+            gasket_->hide();
+            bLemniscat_->show();
+        }
+    });
 
 
     {
@@ -83,9 +103,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     scene_ = ui_->chartView->scene();
+    scene_->installEventFilter(this);
     scene_->setBackgroundBrush(QBrush(Qt::white, Qt::SolidPattern));
     scene_->addItem(gasket_);
-    scene_->addItem(bLemniscat_);
+    scene_->addItem(bLemniscat_); bLemniscat_->hide();
 
     {
         // setting up affinePoints
@@ -125,9 +146,22 @@ MainWindow::MainWindow(QWidget *parent) :
         }
     }
 
+    setAnimation();
 //     next doesn't need, because if we provide parent for MovablePoint object (chart_), it automaticaly adds to scene_
 //     with chart_
 //    scene_->addItem(rotatePoint);
+}
+
+bool MainWindow::eventFilter(QObject *obj, QEvent *event)
+{
+    if (event->type() == QEvent::GraphicsSceneMousePress
+            || event->type() == QEvent::GraphicsSceneMouseDoubleClick) {
+        ui_->label_18->setText("x: " + QString::number(bLemniscat_->getTangentedPoint().x()));
+        ui_->label_19->setText("y: " + QString::number(bLemniscat_->getTangentedPoint().y()));
+        return QObject::eventFilter(obj, event);
+    }
+
+    return QObject::eventFilter(obj, event);
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event)
@@ -138,7 +172,32 @@ void MainWindow::resizeEvent(QResizeEvent* event)
 void MainWindow::redraw()
 {
     gasket_->redraw();
-    //bLemniscat_->redraw();
+    bLemniscat_->redraw();
+}
+
+void MainWindow::setAnimation()
+{
+    const int frameCount = 50;
+
+    animationInterval_ = new QTimer(this);
+
+    connect(animationInterval_, &QTimer::timeout, this, [&]{
+        QTimeLine *timeLine = new QTimeLine(QRandomGenerator::global()->bounded(1000, 2500), this);
+        timeLine->setFrameRange(0, frameCount);
+
+        double randFocus = QRandomGenerator::global()->bounded(13, 80);
+        double oldFocus = bLemniscat_->getFocus();
+        double animationStep = (randFocus - oldFocus)/frameCount;
+
+        connect(timeLine, &QTimeLine::frameChanged, this, [=]{
+            double newFocus = bLemniscat_->getFocus() + animationStep;
+            bLemniscat_->setFocus(newFocus);
+        });
+
+        timeLine->start();
+    });
+
+    animationInterval_->start(2000);
 }
 
 MainWindow::~MainWindow()

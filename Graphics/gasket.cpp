@@ -88,9 +88,7 @@ QRectF Gasket::boundingRect() const
 void Gasket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     GraphicsItemBase::paint(painter, option, widget);
-
-    //drawGasket(painter);
-
+    drawGasket(painter);
     transformateDatail();
 }
 

@@ -11,6 +11,9 @@ using namespace QtCharts;
 class GraphicsItemBase : public QGraphicsItem {
 protected:
     constexpr static double k = 5.65;
+    constexpr static int fontSize = 12;
+    constexpr static double textDistance = 2 * k;
+    const QPointF affineXYDelta = {8, 55};
 
     QChart *chart_;
     QPointF chartPos_;

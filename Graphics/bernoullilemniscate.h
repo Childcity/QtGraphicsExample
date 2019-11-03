@@ -4,8 +4,18 @@
 #include "graphicsitembase.h"
 
 
-class BernoulliLemniscate : public GraphicsItemBase {
-    double focus_ = 120.;
+class BernoulliLemniscate : public QObject, public GraphicsItemBase {
+    Q_OBJECT
+private:
+    double focus_ = 21.; //in mm
+
+    QPointF tangentedPoint_;
+    //очки перегиба
+
+signals:
+    void sigFocusChanged(double fucus);
+
+    void sigCurvatureRadiusChanged(double curvatureRadius);
 
 public:
     BernoulliLemniscate(QChart *chart, Transformation *transformation);
@@ -16,41 +26,31 @@ public:
 
     void redraw() override;
 
+    QPointF getTangentedPoint() const;
+
     void setFocus(double focus);
+
+    double getFocus() const;
+
+    double getArea() const;
+
+    double getLength() const;
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+
 private:
     void transformateDatail() override;
 
-    QPair<QVector<double>, QVector<QPointF>> getPoints(double c, QPointF delta)
-    {
-        QPair<QVector<double>, QVector<QPointF>> points;
-        double startAngle = 0;
-        double endAngle = 2*M_PI;
-        double phiStep = 0.1;
+    QPair<QVector<double>, QVector<QPointF>> getPoints(double c, QPointF delta);
 
-        for (double phi = startAngle; phi <= endAngle + phiStep; phi += phiStep) {
-            //double p = sqrt(tan(M_PI_4) - phi);
-            double x = c * M_SQRT2 * cos(phi) / (pow(sin(phi),2) + 1); //c * M_SQRT2 * (p + pow(p, 3)) / (1 + pow(p, 4));
-            double y = c * M_SQRT2 * cos(phi) * sin(phi) / (pow(sin(phi),2) + 1);//c * M_SQRT2 * (p - pow(p, 3)) / (1 + pow(p, 4));
+    double getFocusSQRT2() const;
 
-            if(std::isnan(x) || std::isnan(y))
-                break;
+    double getFocusSQRT2MM() const;
 
-            points.first <<phi;
-            points.second << (QPointF(x, y) + delta);
-
-            int pLen = points.second.length();
-            if(pLen > 2 && pLen % 2 != 0){
-                points.second << points.second.at(pLen-2) << points.second.at(pLen-1);
-                points.first << points.first.at(pLen-2) << points.first.at(pLen-1);
-            }
-        }
-
-        return points;
-    }
+    const QPointF *findRealMxMy(const QPair<QVector<double>, QVector<QPointF> > &points, double Mx, double My);
 };
 
 #endif // BERNOULLILEMNISCATE_H

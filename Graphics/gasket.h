@@ -11,9 +11,6 @@ using namespace QtCharts;
 
 class Gasket : public GraphicsItemBase {
     constexpr static double margin = 10;
-    constexpr static int fontSize = 12;
-    constexpr static double textDistance = 2 * k;
-    const QPointF affineXYDelta = {8, 55};
 
     bool isPointsNamesVisible_ = false;
     double AB_GH_ = 55;
