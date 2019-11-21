@@ -31,10 +31,10 @@ QRectF Plane::boundingRect() const
                : 0);
 
 
-    return QRectF(x() + xDelta
-                  , y() - 300 - yDelta//50 - detail width
-                  , 300 // if PB is longer then AB -> boundingRect should be extended till PB ends
-                  , 300);
+    return QRectF(150 + xDelta
+                  , 0 - 100 - yDelta//50 - detail width
+                  , 400 // if PB is longer then AB -> boundingRect should be extended till PB ends
+                  , 400);
 }
 
 void Plane::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -48,7 +48,17 @@ void Plane::drawPlane(QPainter *painter)
 {
     painter->drawRect(boundingRect()); //draw rectangle
 
+    QPointF stP(20,250), t(stP);
 
+    QPainterPath plaine(stP);
+
+    stP.rx()+=5; stP.ry()-=50;
+    t.rx() -= 4; t.ry() -= 20;
+    plaine.quadTo(t, stP);
+
+    qDebug() <<plaine.currentPosition() <<mauseP;
+
+    painter->drawPath(plaine.translated(boundingRect().topLeft()));
 }
 
 void Plane::transformateDatail()

@@ -23,6 +23,8 @@ public:
 
     void redraw() override;
 
+    QPointF mauseP;
+
 private:
     void transformateDatail() override;
 
