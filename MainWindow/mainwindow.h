@@ -4,6 +4,7 @@
 #include "Graphics/bernoullilemniscate.h"
 #include "Graphics/transformation.h"
 #include "Graphics/gasket.h"
+#include "Graphics/plane.h"
 
 #include <QGraphicsScene>
 #include <QMainWindow>
@@ -39,6 +40,7 @@ private:
     QChart *chart_;
     Gasket *gasket_;
     BernoulliLemniscate *bLemniscat_;
+    Plane *plane_;
     Transformation *transformation_;
     QTimer *animationInterval_;
 };

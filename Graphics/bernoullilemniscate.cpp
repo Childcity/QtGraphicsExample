@@ -50,7 +50,7 @@ QRectF BernoulliLemniscate::boundingRect() const
                ? affineXYDelta.y()*k
                : 0);
 
-    double scaleDelta = (pow(std::abs(focus_*k), 0.9999));
+    double scaleDelta = pow(std::abs(focus_*k), 0.9999);
 
     return QRectF(150 - scaleDelta + xDelta,
                   0 - scaleDelta - yDelta,

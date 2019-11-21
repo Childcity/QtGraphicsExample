@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui_(new Ui::MainWindow)
 {
     ui_->setupUi(this);
-    ui_->tabWidget->setCurrentIndex(0);
+    ui_->tabWidget->setCurrentIndex(2);
 
     chart_ = new QChart();
     chart_->setParent(this);
@@ -44,6 +44,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // create our Gasket object and add it to the scene
     gasket_ = new Gasket(chart_, transformation_);
     bLemniscat_ = new BernoulliLemniscate(chart_, transformation_);
+    plane_ = new Plane(chart_, transformation_);
 
     connect(ui_->checkBox, &QCheckBox::clicked, [=](bool value){ gasket_->setPointsNamesVisible(value); });
     connect(ui_->spinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setABGH(value); });
@@ -74,12 +75,18 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui_->spinBox_12, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation_->setAffineSystemWeight(value, 1); redraw(); });
     connect(ui_->spinBox_13, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation_->setAffineSystemWeight(value, 2); redraw(); });
     connect(ui_->tabWidget, &QTabWidget::tabBarClicked, this, [=](int index){
-        if(index == 0){
+        if (index == 0) {
             bLemniscat_->hide();
+            plane_->hide();
             gasket_->show();
-        }else{
+        } else if(index == 1){
             gasket_->hide();
+            plane_->hide();
             bLemniscat_->show();
+        } else if(index == 2){
+            gasket_->hide();
+            bLemniscat_->hide();
+            plane_->show();
         }
     });
 
@@ -105,8 +112,9 @@ MainWindow::MainWindow(QWidget *parent) :
     scene_ = ui_->chartView->scene();
     scene_->installEventFilter(this);
     scene_->setBackgroundBrush(QBrush(Qt::white, Qt::SolidPattern));
-    scene_->addItem(gasket_);
+    scene_->addItem(gasket_);   gasket_->hide();
     scene_->addItem(bLemniscat_); bLemniscat_->hide();
+    scene_->addItem(plane_);
 
     {
         // setting up affinePoints
@@ -173,6 +181,7 @@ void MainWindow::redraw()
 {
     gasket_->redraw();
     bLemniscat_->redraw();
+    plane_->redraw();
 }
 
 void MainWindow::setAnimation()

@@ -23,7 +23,8 @@ SOURCES += \
     Graphics/movablepoint.cpp \
     Graphics/transformation.cpp \
     Graphics/bernoullilemniscate.cpp \
-    Graphics/graphicsitembase.cpp
+    Graphics/graphicsitembase.cpp \
+    Graphics/plane.cpp
 
 HEADERS += \
 	MainWindow/mainwindow.h \
@@ -34,7 +35,8 @@ HEADERS += \
 	Graphics/movablepoint.h \
     Graphics/transformation.h \
     Graphics/bernoullilemniscate.h \
-    Graphics/graphicsitembase.h
+    Graphics/graphicsitembase.h \
+    Graphics/plane.h
 
 FORMS += \
     MainWindow/mainwindow.ui
