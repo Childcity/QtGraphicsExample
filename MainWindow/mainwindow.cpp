@@ -155,7 +155,7 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
     setAnimation();
-//     next doesn't need, because if we provide parent for MovablePoint object (chart_), it automaticaly adds to scene_
+//     next doesn'tmP need, because if we provide parent for MovablePoint object (chart_), it automaticaly adds to scene_
 //     with chart_
 //    scene_->addItem(rotatePoint);
 }
@@ -166,7 +166,6 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
             || event->type() == QEvent::GraphicsSceneMouseDoubleClick) {
         ui_->label_18->setText("x: " + QString::number(bLemniscat_->getTangentedPoint().x()));
         ui_->label_19->setText("y: " + QString::number(bLemniscat_->getTangentedPoint().y()));
-        return QObject::eventFilter(obj, event);
     }
 
     return QObject::eventFilter(obj, event);

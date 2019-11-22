@@ -9,10 +9,13 @@
 
 using namespace QtCharts;
 
-class Plane : public GraphicsItemBase {
+class Plane: public GraphicsItemBase {
+private:
+    bool isTrianglesVisible_ = true;
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+    void mousePressEvent (QGraphicsSceneMouseEvent * event) override;
 
 public:
     Plane(QChart *chart, Transformation *transformation);
@@ -24,6 +27,8 @@ public:
     void redraw() override;
 
     QPointF mauseP;
+
+    void setTrianglesVisible(bool isTrianglesVisible);
 
 private:
     void transformateDatail() override;
