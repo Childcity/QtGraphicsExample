@@ -65,6 +65,8 @@ MainWindow::MainWindow(QWidget *parent) :
         ui_->label_31->setText(QString("%1 (mm)").arg(bLemniscat_->getLength()));
     });
 
+    connect(ui_->checkBox_5, &QCheckBox::clicked, this, [=](bool value){ plane_->setTrianglesVisible(value); });
+
     // Transformation buttons
     connect(ui_->spinBox_2, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation_->setDeltaHeight(value); redraw(); });
     connect(ui_->spinBox_10, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation_->setDeltaWidth(value); redraw();  });

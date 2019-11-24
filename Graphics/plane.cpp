@@ -41,6 +41,7 @@ QRectF Plane::boundingRect() const
 void Plane::setTrianglesVisible(bool isTrianglesVisible)
 {
     isTrianglesVisible_ = isTrianglesVisible;
+    redraw();
 }
 
 void Plane::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -175,11 +176,13 @@ void Plane::drawPlane(QPainter *painter)
 
     for (const auto &triangle : triangles) {
         painter->setPen(QPen(Qt::magenta, 1, Qt::PenStyle::SolidLine));
-        painter->drawEllipse(triangle[1]+delta,5,5);
+        painter->drawEllipse(triangle[1]+delta, 5, 5);
 
         painter->setPen(QPen(Qt::black, 1, Qt::PenStyle::DashLine));
         painter->drawLine({triangle[0]+delta, triangle[1]+delta});
         painter->drawLine({triangle[1]+delta, triangle[2]+delta});
+        painter->drawEllipse(triangle[0]+delta, 2, 2);
+        painter->drawEllipse(triangle[2]+delta, 2, 2);
     }
 }
 
