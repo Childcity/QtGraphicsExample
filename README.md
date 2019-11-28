@@ -7,7 +7,7 @@ Working with 2D modeling, using qt
 ### Gasket and Affine transformation
 ![Gasket_Affine](./docs/Gasket_Affine.png)
 
-### Lemniscate of Bernoulli and Affine transformation
+### Lemniscate of Bernoulli, Tangent line and Affine transformation
 ![BernuliLemniscat_Affine](./docs/BernuliLemniscat_Affine.png)
 
 ### Plane, drawed by Quadratic Bézier curve
