@@ -22,6 +22,8 @@ public:
 
     explicit MovablePoint(int radius, Qt::GlobalColor color, QString label, QGraphicsItem *parent = nullptr);
 
+    MovablePoint *setPos(const QPointF &pos);
+
 	virtual ~MovablePoint() override;
 
 protected:

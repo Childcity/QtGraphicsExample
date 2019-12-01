@@ -2,6 +2,7 @@
 #define Plane_H
 
 #include "graphicsitembase.h"
+#include "movablepoint.h"
 #include "transformation.h"
 
 #include <QChart>
@@ -12,6 +13,7 @@ using namespace QtCharts;
 class Plane: public GraphicsItemBase {
 private:
     bool isTrianglesVisible_ = true;
+    QList<MovablePoint *> triangles_;
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
@@ -32,6 +34,13 @@ public:
 
 private:
     void transformateDatail() override;
+
+    MovablePoint *createPlanePoint(const QPointF &point) {
+        MovablePoint *mPoint = new MovablePoint(5, Qt::darkGray, "", this);
+        return mPoint->setPos(point);
+    }
+
+    void createPlane();
 
     void drawPlane(QPainter *painter);
 };

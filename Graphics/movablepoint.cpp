@@ -18,6 +18,12 @@ MovablePoint::MovablePoint(int radius, Qt::GlobalColor color, QString label, QGr
     setFlag(QGraphicsItem::ItemSendsScenePositionChanges,true);
 }
 
+MovablePoint *MovablePoint::setPos(const QPointF &pos)
+{
+    QGraphicsEllipseItem::setPos(pos);
+    return this;
+}
+
 QVariant MovablePoint::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
 {
 
