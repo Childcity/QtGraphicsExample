@@ -15,20 +15,7 @@ void Plane::redraw() {
 Plane::Plane(QChart *chart, Transformation *transformation)
     : GraphicsItemBase (chart, transformation)
 {
-    //createPlane();
-
-
-    QFile f("cat.txt");
-    f.open(QIODevice::OpenModeFlag::ReadWrite);
-    QDataStream strm(&f);
-    int size;
-    strm >> size;
-    for (int i = 0; i < size; ++i) {
-        QPointF mP;
-        strm >>mP;
-        triangles_ << createPlanePoint(mP);
-    }
-    f.close();
+    createPlane();
 }
 
 Plane::~Plane(){}
@@ -58,17 +45,17 @@ void Plane::setTrianglesVisible(bool isTrianglesVisible)
     isTrianglesVisible_ = isTrianglesVisible;
     redraw();
 
-    if(!isTrianglesVisible){
-        QFile f("cat.txt");
-        f.open(QIODevice::OpenModeFlag::ReadWrite);
-        QDataStream strm(&f);
+//    if(!isTrianglesVisible){
+//        QFile f("cat.bin");
+//        f.open(QIODevice::OpenModeFlag::ReadWrite);
+//        QDataStream strm(&f);
 
-        strm << triangles_.size();
-        for(auto mP : triangles_){
-            strm << mP->pos();
-        }
-        f.close();
-    }
+//        strm << triangles_.size();
+//        for(auto mP : triangles_){
+//            strm << mP->pos();
+//        }
+//        f.close();
+//    }
 }
 
 void Plane::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -80,7 +67,6 @@ void Plane::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
 void Plane::mousePressEvent (QGraphicsSceneMouseEvent * event)
 {
-    mauseP = event->pos();
     return GraphicsItemBase::mousePressEvent(event);
 }
 
