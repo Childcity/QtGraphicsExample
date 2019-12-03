@@ -14,13 +14,18 @@ void Plane::redraw() {
 
 void Plane::animateTo(QString figureFilePath, bool isForwardAnimation)
 {
+    if (! isForwardAnimation) {
+        createPlane();
+        return;
+    }
+
     QList<QPointF> figureTrianglesPoints;
     QList<QPointF> currentTrianglesPoints;
 
     {
         QFile f(figureFilePath);
         if (! f.open(QIODevice::OpenModeFlag::ReadWrite)){
-            qFatal("%s", f.errorString().toLocal8Bit().constData());
+            qFatal("[%s] %s", figureFilePath.toLocal8Bit().constData(), f.errorString().toLocal8Bit().constData());
         }
         QDataStream strm(&f);
         int size;
@@ -43,24 +48,16 @@ void Plane::animateTo(QString figureFilePath, bool isForwardAnimation)
 
 
     scene()->connect(timeLine, &QTimeLine::frameChanged, scene(), [=]{
-        for(int i = 0; i < currentTrianglesPoints.size()-1; ++i){
+        for (int i = 0; i < currentTrianglesPoints.size()-1; ++i) {
             const auto deltaPoint = currentTrianglesPoints[i] - figureTrianglesPoints[i];
             const auto stepPoint = QPointF(deltaPoint.x()/animationFrameCount_,
                                            deltaPoint.y()/animationFrameCount_);
 
-            if (isForwardAnimation) {
-                triangles_[i]->setPos(triangles_[i]->pos() - stepPoint);
-            } else {
-                triangles_[i]->setPos(triangles_[i]->pos() + stepPoint);
-            }
+            triangles_[i]->setPos(triangles_[i]->pos() - stepPoint);
         }
     });
 
-
-    if(!isForwardAnimation)
-        createPlane();
-    else
-        timeLine->start();
+    timeLine->start();
 }
 
 

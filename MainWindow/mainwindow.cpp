@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui_->setupUi(this);
     ui_->tabWidget->setCurrentIndex(2);
+    setStyleSheet("font: 10pt 'Ubuntu';font-style: normal;");
 
     chart_ = new QChart();
     chart_->setParent(this);
