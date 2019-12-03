@@ -5,10 +5,62 @@
 #include <QPen>
 #include <QDebug>
 #include <qgraphicssceneevent.h>
+#include <QGraphicsScene>
 
 void Plane::redraw() {
     GraphicsItemBase::redraw();
     update();
+}
+
+void Plane::animateTo(QString figureFilePath, bool isForwardAnimation)
+{
+    QList<QPointF> figureTrianglesPoints;
+    QList<QPointF> currentTrianglesPoints;
+
+    {
+        QFile f(figureFilePath);
+        if (! f.open(QIODevice::OpenModeFlag::ReadWrite)){
+            qFatal("%s", f.errorString().toLocal8Bit().constData());
+        }
+        QDataStream strm(&f);
+        int size;
+        strm >> size;
+        for (int i = 0; i < size; ++i) {
+            QPointF p;
+            strm >> p;
+            figureTrianglesPoints << p;
+        }
+        f.close();
+    }
+
+    // save cuurent picture to currentTrianglesPoints
+    for (const auto &movablePoint : triangles_) {
+        currentTrianglesPoints << movablePoint->pos();
+    }
+
+    QTimeLine *timeLine = new QTimeLine(3000, scene());
+    timeLine->setFrameRange(0, animationFrameCount_);
+
+
+    scene()->connect(timeLine, &QTimeLine::frameChanged, scene(), [=]{
+        for(int i = 0; i < currentTrianglesPoints.size()-1; ++i){
+            const auto deltaPoint = currentTrianglesPoints[i] - figureTrianglesPoints[i];
+            const auto stepPoint = QPointF(deltaPoint.x()/animationFrameCount_,
+                                           deltaPoint.y()/animationFrameCount_);
+
+            if (isForwardAnimation) {
+                triangles_[i]->setPos(triangles_[i]->pos() - stepPoint);
+            } else {
+                triangles_[i]->setPos(triangles_[i]->pos() + stepPoint);
+            }
+        }
+    });
+
+
+    if(!isForwardAnimation)
+        createPlane();
+    else
+        timeLine->start();
 }
 
 
@@ -16,9 +68,26 @@ Plane::Plane(QChart *chart, Transformation *transformation)
     : GraphicsItemBase (chart, transformation)
 {
     createPlane();
+
+//    QFile f("/home/childcity/cat.bin");
+//    if (! f.open(QIODevice::OpenModeFlag::ReadWrite)){
+//        qFatal("%s", f.errorString().toLocal8Bit().constData());
+//    }
+//    QDataStream strm(&f);
+//    int size;
+//    strm >> size;
+//    for (int i = 0; i < size; ++i) {
+//        QPointF p;
+//        strm >> p;
+//        //triangles_ << createPlanePoint(p);
+//    }
+//    f.close();
 }
 
-Plane::~Plane(){}
+Plane::~Plane()
+{
+    clearTringle();
+}
 
 QRectF Plane::boundingRect() const
 {
@@ -35,8 +104,8 @@ QRectF Plane::boundingRect() const
 
 
     return QRectF(160 + xDelta
-                  , 0 - 150 - yDelta//50 - detail width
-                  , 430 // if PB is longer then AB -> boundingRect should be extended till PB ends
+                  , 0 - 150 - yDelta
+                  , 430
                   , 430);
 }
 
@@ -45,17 +114,17 @@ void Plane::setTrianglesVisible(bool isTrianglesVisible)
     isTrianglesVisible_ = isTrianglesVisible;
     redraw();
 
-//    if(!isTrianglesVisible){
-//        QFile f("cat.bin");
-//        f.open(QIODevice::OpenModeFlag::ReadWrite);
-//        QDataStream strm(&f);
+    //    if(!isTrianglesVisible){
+    //        QFile f("cat.bin");
+    //        f.open(QIODevice::OpenModeFlag::ReadWrite);
+    //        QDataStream strm(&f);
 
-//        strm << triangles_.size();
-//        for(auto mP : triangles_){
-//            strm << mP->pos();
-//        }
-//        f.close();
-//    }
+    //        strm << triangles_.size();
+    //        for(auto mP : triangles_){
+    //            strm << mP->pos();
+    //        }
+    //        f.close();
+    //    }
 }
 
 void Plane::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -72,6 +141,8 @@ void Plane::mousePressEvent (QGraphicsSceneMouseEvent * event)
 
 void Plane::createPlane()
 {
+    clearTringle();
+
     QPointF delta(boundingRect().topLeft());
     QPointF stP(30 + delta.rx(), 250 + delta.ry()), tmP(stP);
 
@@ -157,12 +228,6 @@ void Plane::createPlane()
 
 void Plane::drawPlane(QPainter *painter)
 {
-    //    qDebug() <<plaine.currentPosition() <<mauseP
-    //            <<"tmP-mP" <<tmP-mauseP
-    //           <<" pathPos-mP" <<stP -mauseP;
-
-    //painter->drawRect(boundingRect()); //draw rectangle
-
     QPainterPath plaine(triangles_.at(0)->pos());
 
     QPointF stP, ctrlP, edP;
@@ -183,8 +248,22 @@ void Plane::drawPlane(QPainter *painter)
     painter->drawPath(plaine);
 }
 
+void Plane::clearTringle()
+{
+    for(auto tr : triangles_){
+        tr->deleteLater();
+    }
+
+    triangles_.clear();
+}
+
 void Plane::transformateDatail()
 {
     GraphicsItemBase::transformateDatail();
     setTransform(transformation_->getTransformation().first);
+}
+
+MovablePoint *Plane::createPlanePoint(const QPointF &point) {
+    MovablePoint *mPoint = new MovablePoint(isTrianglesVisible_ ? 3 : 0, Qt::darkGray, "", this);
+    return mPoint->setPos(point);
 }

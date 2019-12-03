@@ -66,6 +66,7 @@ MainWindow::MainWindow(QWidget *parent) :
     });
 
     connect(ui_->checkBox_5, &QCheckBox::clicked, this, [=](bool value){ plane_->setTrianglesVisible(value); });
+    connect(ui_->checkBox_6, &QCheckBox::clicked, this, [=](bool value){ plane_->animateTo(ui_->lineEdit->text(), value); });
 
     // Transformation buttons
     connect(ui_->spinBox_2, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation_->setDeltaHeight(value); redraw(); });

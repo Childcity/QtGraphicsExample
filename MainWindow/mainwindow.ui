@@ -532,7 +532,7 @@
                 <string>Параметры кривой</string>
                </property>
                <property name="alignment">
-                <set>Qt::AlignCenter</set>
+                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                </property>
               </widget>
              </item>
@@ -786,7 +786,7 @@
            <rect>
             <x>10</x>
             <y>10</y>
-            <width>247</width>
+            <width>231</width>
             <height>311</height>
            </rect>
           </property>
@@ -858,26 +858,38 @@
            <item>
             <widget class="QLabel" name="label_33">
              <property name="text">
-              <string>Путь к точкам с рисунком</string>
+              <string>Путь к файлу с точками для анимационного рисунка</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
            <item>
             <widget class="QLineEdit" name="lineEdit">
              <property name="text">
-              <string>~/cat.bin</string>
+              <string>/home/childcity/cat.bin</string>
              </property>
             </widget>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_13">
-             <property name="bottomMargin">
-              <number>20</number>
+            <widget class="QCheckBox" name="checkBox_6">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Maximum" vsizetype="Minimum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
              </property>
-            </layout>
+             <property name="text">
+              <string>Анимировать к рисунку</string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
            </item>
            <item>
             <spacer name="verticalSpacer_4">
