@@ -13,3 +13,7 @@ Working with 2D modeling, using qt
 ### Plane, drawed by Quadratic Bézier curve
 ![Palane_BezueCurve](./docs/Palane_BezueCurve.png)
 
+### Plane animation to Cat
+![Palane_BezueCurve](./docs/Animation/PlaneToCatAnimation.gif)
+![Palane_BezueCurve](./docs/Animation/BezieMove.gif)
+![Palane_BezueCurve](./docs/Animation/PlaneToCat.gif)
