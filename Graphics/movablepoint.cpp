@@ -1,5 +1,6 @@
 #include "movablepoint.h"
 
+#include <QDateTime>
 #include <QPainter>
 
 MovablePoint::MovablePoint(int radius, Qt::GlobalColor color, QString label, QGraphicsItem *parent)
@@ -47,13 +48,18 @@ void MovablePoint::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     QGraphicsEllipseItem::paint(painter, option, widget);
     painter->drawText(boundingRect().center() + QPoint(7,10), label_);    // Draw you text
 }
-
+QDateTime lastClick_;
 void MovablePoint::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    if(event->button() == Qt::LeftButton)
-    {
+    if((QDateTime::currentMSecsSinceEpoch() - lastClick_.toMSecsSinceEpoch()) < 350){
+        emit doubleClicked(pos());
+    }
+
+    lastClick_ = QDateTime::currentDateTime();
+
+    if (event->button() == Qt::MouseButton::LeftButton) {
         setBrush(QBrush(color_, Qt::BrushStyle::CrossPattern));
-        QGraphicsItem::mousePressEvent(event);
+        QGraphicsEllipseItem::mousePressEvent(event);
         event->accept();
         return;
     }
@@ -62,10 +68,9 @@ void MovablePoint::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void MovablePoint::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (event->button() == Qt::LeftButton)
-    {
+    if (event->button() == Qt::MouseButton::LeftButton) {
         setBrush(QBrush(color_, Qt::BrushStyle::SolidPattern));
-        QGraphicsItem::mouseReleaseEvent(event);
+        QGraphicsEllipseItem::mouseReleaseEvent(event);
         event->accept();
         return;
     }

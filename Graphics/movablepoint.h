@@ -16,6 +16,7 @@ private:
 
 signals:
     void positionChanged(const QPointF &pos);
+    void doubleClicked(const QPointF &pos);
 
 public:
 	using Ptr = MovablePoint*;

@@ -42,6 +42,8 @@ private:
 
     void createPlane();
 
+    void setupSmoothing();
+
     void drawPlane(QPainter *painter);
 
     void clearTringle();

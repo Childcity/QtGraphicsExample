@@ -224,6 +224,43 @@ void Plane::createPlane()
 
     tmP.rx() -= 68;      tmP.ry() -= 32;
     triangles_ << createPlanePoint(tmP) << triangles_.at(0);
+
+    setupSmoothing();
+}
+
+void Plane::setupSmoothing()
+{
+    const auto doubleClickedAction = [=](const QPointF &pos){
+        const auto it = std::find_if(triangles_.begin(), triangles_.end(), [=](const QGraphicsItem *a) { return a->pos() == pos; });
+
+        const auto r21 = (*it)->pos();
+        const auto r11 = (*(it-1))->pos();
+        auto r12 = (*(it+1))->pos();
+
+        const double alpha1 = QLineF(r11, r21).length();
+        const double alpha2 = QLineF(r12, r21).length();
+
+        // Расчитываем глаткость первого порядка для кривой Безье второго порядка
+        r12 = r21 + (alpha2 * (r21 - r11)) / alpha1;
+        (*(it+1))->setPos(r12);
+
+        scene()->connect(*(it-1), &MovablePoint::positionChanged, scene(), [=]{
+            const auto r21 = (*it)->pos();
+            const auto r11 = (*(it-1))->pos();
+            auto r12 = (*(it+1))->pos();
+
+            const double alpha1 = QLineF(r11, r21).length();
+            const double alpha2 = QLineF(r12, r21).length();
+
+            // Расчитываем глаткость первого порядка для кривой Безье второго порядка
+            r12 = r21 + (alpha2 * (r21 - r11)) / alpha1;
+            (*(it+1))->setPos(r12);
+        });
+    };
+
+    for(const MovablePoint *mp : triangles_){
+        scene()->connect(mp, &MovablePoint::doubleClicked, doubleClickedAction);
+    }
 }
 
 void Plane::drawPlane(QPainter *painter)
