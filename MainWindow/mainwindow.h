@@ -5,6 +5,7 @@
 #include "Graphics/transformation.h"
 #include "Graphics/gasket.h"
 #include "Graphics/plane.h"
+#include "Graphics/dragonfractal.h"
 
 #include <QGraphicsScene>
 #include <QMainWindow>
@@ -41,6 +42,8 @@ private:
     Gasket *gasket_;
     BernoulliLemniscate *bLemniscat_;
     Plane *plane_;
+    DragonFractal *dragon_;
+
     Transformation *transformation_;
     QTimer *animationInterval_;
 };

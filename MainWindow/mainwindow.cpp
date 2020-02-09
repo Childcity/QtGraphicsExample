@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui_(new Ui::MainWindow)
 {
     ui_->setupUi(this);
-    ui_->tabWidget->setCurrentIndex(2);
+    ui_->tabWidget->setCurrentIndex(3);
     setStyleSheet("font: 10pt 'Ubuntu';font-style: normal;");
 
     chart_ = new QChart();
@@ -46,6 +46,7 @@ MainWindow::MainWindow(QWidget *parent) :
     gasket_ = new Gasket(chart_, transformation_);
     bLemniscat_ = new BernoulliLemniscate(chart_, transformation_);
     plane_ = new Plane(chart_, transformation_);
+    dragon_ = new DragonFractal(chart_, transformation_);
 
     connect(ui_->checkBox, &QCheckBox::clicked, [=](bool value){ gasket_->setPointsNamesVisible(value); });
     connect(ui_->spinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setABGH(value); });
@@ -82,15 +83,23 @@ MainWindow::MainWindow(QWidget *parent) :
         if (index == 0) {
             bLemniscat_->hide();
             plane_->hide();
+            dragon_->hide();
             gasket_->show();
         } else if(index == 1){
             gasket_->hide();
             plane_->hide();
+            dragon_->hide();
             bLemniscat_->show();
         } else if(index == 2){
             gasket_->hide();
             bLemniscat_->hide();
+            dragon_->hide();
             plane_->show();
+        } if(index == 3){
+            gasket_->hide();
+            bLemniscat_->hide();
+            plane_->hide();
+            dragon_->show();
         }
     });
 
@@ -118,7 +127,8 @@ MainWindow::MainWindow(QWidget *parent) :
     scene_->setBackgroundBrush(QBrush(Qt::white, Qt::SolidPattern));
     scene_->addItem(gasket_);   gasket_->hide();
     scene_->addItem(bLemniscat_); bLemniscat_->hide();
-    scene_->addItem(plane_);
+    scene_->addItem(plane_); plane_->hide();
+    scene_->addItem(dragon_);
 
     {
         // setting up affinePoints

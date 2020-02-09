@@ -24,7 +24,8 @@ SOURCES += \
     Graphics/transformation.cpp \
     Graphics/bernoullilemniscate.cpp \
     Graphics/graphicsitembase.cpp \
-    Graphics/plane.cpp
+    Graphics/plane.cpp \
+    Graphics/dragonfractal.cpp
 
 HEADERS += \
 	MainWindow/mainwindow.h \
@@ -36,7 +37,8 @@ HEADERS += \
     Graphics/transformation.h \
     Graphics/bernoullilemniscate.h \
     Graphics/graphicsitembase.h \
-    Graphics/plane.h
+    Graphics/plane.h \
+    Graphics/dragonfractal.h
 
 FORMS += \
     MainWindow/mainwindow.ui

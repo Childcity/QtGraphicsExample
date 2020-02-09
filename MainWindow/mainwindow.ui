@@ -76,7 +76,7 @@
          <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>3</number>
         </property>
         <property name="usesScrollButtons">
          <bool>true</bool>
@@ -906,6 +906,11 @@
            </item>
           </layout>
          </widget>
+        </widget>
+        <widget class="QWidget" name="tab_4">
+         <attribute name="title">
+          <string>Дракон</string>
+         </attribute>
         </widget>
        </widget>
       </item>
