@@ -21,12 +21,12 @@ SOURCES += \
 	Graphics/circle.cpp \
     Graphics/arc.cpp \
     Graphics/movablepoint.cpp \
-    Graphics/transformation.cpp \
     Graphics/bernoullilemniscate.cpp \
     Graphics/graphicsitembase.cpp \
     Graphics/plane.cpp \
     Graphics/dragonfractal.cpp \
-    Graphics/hauseindimetricproection.cpp
+    Graphics/hauseindimetricproection.cpp \
+    Graphics/transformation2d.cpp
 
 HEADERS += \
 	MainWindow/mainwindow.h \
@@ -35,13 +35,13 @@ HEADERS += \
 	Graphics/circle.h \
     Graphics/arc.h \
 	Graphics/movablepoint.h \
-    Graphics/transformation.h \
     Graphics/bernoullilemniscate.h \
     Graphics/graphicsitembase.h \
     Graphics/plane.h \
     Graphics/dragonfractal.h \
     Graphics/HauseInDimetricProection.h \
-    Graphics/hauseindimetricproection.h
+    Graphics/hauseindimetricproection.h \
+    Graphics/transformation2d.h
 
 FORMS += \
     MainWindow/mainwindow.ui

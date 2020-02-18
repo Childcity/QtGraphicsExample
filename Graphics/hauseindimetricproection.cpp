@@ -12,7 +12,7 @@ void HauseInDimetricProection::redraw() {
     update();
 }
 
-HauseInDimetricProection::HauseInDimetricProection(QChart *chart, Transformation *transformation)
+HauseInDimetricProection::HauseInDimetricProection(QChart *chart, Transformation2D *transformation)
     : GraphicsItemBase (chart, transformation)
 {
 
@@ -44,7 +44,6 @@ void HauseInDimetricProection::paint(QPainter *painter, const QStyleOptionGraphi
     //painter->setPen(QPen(p.second, 1));
 
 
-//    genDragon();
 
     for (const auto &p : housePoints_) {
         painter->drawEllipse(p.toPointF(), 5, 5);

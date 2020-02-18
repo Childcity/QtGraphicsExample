@@ -18,7 +18,7 @@ signals:
     void sigCurvatureRadiusChanged(double curvatureRadius);
 
 public:
-    BernoulliLemniscate(QChart *chart, Transformation *transformation);
+    BernoulliLemniscate(QChart *chart, Transformation2D *transformation);
 
     ~BernoulliLemniscate() override;
 

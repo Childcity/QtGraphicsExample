@@ -32,7 +32,7 @@ double BernoulliLemniscate::getArea() const { return getFocusSQRT2MM() * getFocu
 
 double BernoulliLemniscate::getLength() const { return getFocusSQRT2MM() * 5.244; }
 
-BernoulliLemniscate::BernoulliLemniscate(QChart *chart, Transformation *transformation)
+BernoulliLemniscate::BernoulliLemniscate(QChart *chart, Transformation2D *transformation)
     : GraphicsItemBase (chart, transformation)
 {}
 

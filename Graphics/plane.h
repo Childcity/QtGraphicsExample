@@ -3,7 +3,7 @@
 
 #include "graphicsitembase.h"
 #include "movablepoint.h"
-#include "transformation.h"
+#include "transformation2d.h"
 
 #include <QChart>
 #include <QGraphicsItem>
@@ -23,7 +23,7 @@ protected:
     void mousePressEvent (QGraphicsSceneMouseEvent * event) override;
 
 public:
-    Plane(QChart *chart, Transformation *transformation);
+    Plane(QChart *chart, Transformation2D *transformation);
 
     ~Plane() override;
 

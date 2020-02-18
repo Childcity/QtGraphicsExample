@@ -10,7 +10,7 @@
 #include <algorithm>
 #include <cmath>
 
-class Transformation {
+class Transformation2D {
     double deltaHeight_ = 0;
     double deltaWidth_ = 0;
 
@@ -27,7 +27,7 @@ class Transformation {
     };
 
 public:
-    explicit Transformation(){}
+    explicit Transformation2D(){}
 
     QPair<QTransform, QTransform> getTransformation() const;
 

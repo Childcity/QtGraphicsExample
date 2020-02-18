@@ -1,7 +1,7 @@
 #ifndef GRAPHICSITEMBASE_H
 #define GRAPHICSITEMBASE_H
 
-#include "transformation.h"
+#include "transformation2d.h"
 
 #include <QChart>
 #include <QGraphicsItem>
@@ -18,7 +18,7 @@ protected:
     QChart *chart_;
     QPointF chartPos_;
 
-    const Transformation *transformation_;
+    const Transformation2D *transformation_;
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
@@ -27,7 +27,7 @@ protected:
     virtual void redraw();
 
 public:
-    GraphicsItemBase(QChart *chart, Transformation *transformation);
+    GraphicsItemBase(QChart *chart, Transformation2D *transformation);
 
     QPointF getCoordXEnd();
 

@@ -12,7 +12,7 @@ void DragonFractal::redraw() {
     update();
 }
 
-DragonFractal::DragonFractal(QChart *chart, Transformation *transformation)
+DragonFractal::DragonFractal(QChart *chart, Transformation2D *transformation)
     : GraphicsItemBase (chart, transformation)
 {
     genDragon();

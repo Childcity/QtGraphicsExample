@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include "Graphics/bernoullilemniscate.h"
-#include "Graphics/transformation.h"
+#include "Graphics/transformation2d.h"
 #include "Graphics/gasket.h"
 #include "Graphics/plane.h"
 #include "Graphics/dragonfractal.h"
@@ -46,7 +46,7 @@ private:
     DragonFractal *dragon_;
     HauseInDimetricProection *house_;
 
-    Transformation *transformation_;
+    Transformation2D *transformation_;
     QTimer *animationInterval_;
 };
 

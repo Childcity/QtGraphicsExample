@@ -61,7 +61,7 @@ void Plane::animateTo(QString figureFilePath, bool isForwardAnimation)
 }
 
 
-Plane::Plane(QChart *chart, Transformation *transformation)
+Plane::Plane(QChart *chart, Transformation2D *transformation)
     : GraphicsItemBase (chart, transformation)
 {
     createPlane();

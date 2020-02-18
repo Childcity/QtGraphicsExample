@@ -4,7 +4,7 @@
 #include <QValueAxis>
 #include <QGraphicsScene>
 
-GraphicsItemBase::GraphicsItemBase(QChart *chart, Transformation *transformation)
+GraphicsItemBase::GraphicsItemBase(QChart *chart, Transformation2D *transformation)
     : chart_(chart)
     , transformation_(transformation)
 {

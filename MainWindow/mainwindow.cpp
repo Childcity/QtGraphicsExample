@@ -40,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui_->chartView->setRenderHint(QPainter::Antialiasing);
     ui_->chartView->setChart(chart_);
 
-    transformation_ = new Transformation();
+    transformation_ = new Transformation2D();
 
     // create our Gasket object and add it to the scene
     gasket_ = new Gasket(chart_, transformation_);
@@ -70,7 +70,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui_->checkBox_5, &QCheckBox::clicked, this, [=](bool value){ plane_->setTrianglesVisible(value); });
     connect(ui_->checkBox_6, &QCheckBox::clicked, this, [=](bool value){ plane_->animateTo(ui_->lineEdit->text(), value); });
 
-    // Transformation buttons
+    // Transformation2D buttons
     connect(ui_->spinBox_2, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation_->setDeltaHeight(value); redraw(); });
     connect(ui_->spinBox_10, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation_->setDeltaWidth(value); redraw();  });
     connect(ui_->spinBox_9, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation_->setRotateAncle(value); redraw();  });

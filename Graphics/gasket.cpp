@@ -59,7 +59,7 @@ void Gasket::setPB(double BP)
     redraw();
 }
 
-Gasket::Gasket(QChart *chart, Transformation *transformation)
+Gasket::Gasket(QChart *chart, Transformation2D *transformation)
     : GraphicsItemBase (chart, transformation)
 {}
 

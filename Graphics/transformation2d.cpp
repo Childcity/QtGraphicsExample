@@ -1,71 +1,71 @@
-#include "transformation.h"
+#include "transformation2d.h"
 
-double Transformation::getDeltaWidth() const
+double Transformation2D::getDeltaWidth() const
 {
     return deltaWidth_;
 }
 
-void Transformation::setDeltaWidth(double deltaWidth)
+void Transformation2D::setDeltaWidth(double deltaWidth)
 {
     deltaWidth_ = deltaWidth;
 }
 
-double Transformation::getRotateAncle() const
+double Transformation2D::getRotateAncle() const
 {
     return rotateAncle_;
 }
 
-void Transformation::setRotateAncle(double rotateAncle)
+void Transformation2D::setRotateAncle(double rotateAncle)
 {
     rotateAncle_ = rotateAncle;
 }
 
-QPointF Transformation::getRotatePoint() const
+QPointF Transformation2D::getRotatePoint() const
 {
     return rotatePoint_;
 }
 
-void Transformation::setRotatePoint(const QPointF &rotatePoint)
+void Transformation2D::setRotatePoint(const QPointF &rotatePoint)
 {
     rotatePoint_ = rotatePoint;
 }
 
-bool Transformation::isAffineEnabled() const
+bool Transformation2D::isAffineEnabled() const
 {
     return isAffineEnabled_;
 }
 
-void Transformation::setAffineEnabled(bool isAffineEnabled)
+void Transformation2D::setAffineEnabled(bool isAffineEnabled)
 {
     isAffineEnabled_ = isAffineEnabled;
 }
 
-bool Transformation::isProectiveEnabled() const
+bool Transformation2D::isProectiveEnabled() const
 {
     return isProectiveEnabled_;
 }
 
-void Transformation::setProectiveEnabled(bool isProectiveEnabled)
+void Transformation2D::setProectiveEnabled(bool isProectiveEnabled)
 {
     isProectiveEnabled_ = isProectiveEnabled;
 }
 
-QVector<QPair<float, QPointF> > Transformation::getAffineSystemPoints() const
+QVector<QPair<float, QPointF> > Transformation2D::getAffineSystemPoints() const
 {
     return affineSystemPoints_;
 }
 
-void Transformation::setAffineSystemPoint(const QPointF &affineSystemPoint, int i)
+void Transformation2D::setAffineSystemPoint(const QPointF &affineSystemPoint, int i)
 {
     affineSystemPoints_[i].second = affineSystemPoint;
 }
 
-void Transformation::setAffineSystemWeight(float weight, int i)
+void Transformation2D::setAffineSystemWeight(float weight, int i)
 {
     affineSystemPoints_[i].first = weight;
 }
 
-QPair<QTransform, QTransform> Transformation::getTransformation() const
+QPair<QTransform, QTransform> Transformation2D::getTransformation() const
 {
     QTransform transformMatrix;
 
@@ -132,12 +132,12 @@ QPair<QTransform, QTransform> Transformation::getTransformation() const
     return {transformMatrix, QTransform()};
 }
 
-double Transformation::getDeltaHeight() const
+double Transformation2D::getDeltaHeight() const
 {
     return deltaHeight_;
 }
 
-void Transformation::setDeltaHeight(double deltaHeight)
+void Transformation2D::setDeltaHeight(double deltaHeight)
 {
     deltaHeight_ = deltaHeight;
 }

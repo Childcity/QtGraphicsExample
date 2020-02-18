@@ -2,7 +2,7 @@
 #define GASKET_H
 
 #include "graphicsitembase.h"
-#include "transformation.h"
+#include "transformation2d.h"
 
 #include <QChart>
 #include <QGraphicsItem>
@@ -25,7 +25,7 @@ protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
 public:
-    Gasket(QChart *chart, Transformation *transformation);
+    Gasket(QChart *chart, Transformation2D *transformation);
 
     ~Gasket() override;
 

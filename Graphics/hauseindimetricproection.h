@@ -2,7 +2,7 @@
 #define HauseInDimetricProection_H
 
 #include "graphicsitembase.h"
-#include "transformation.h"
+#include "transformation2d.h"
 
 #include <QChart>
 #include <QGraphicsItem>
@@ -25,7 +25,7 @@ protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
 public:
-    HauseInDimetricProection(QChart *chart, Transformation *transformation);
+    HauseInDimetricProection(QChart *chart, Transformation2D *transformation);
 
     QRectF boundingRect() const override;
 
