@@ -25,7 +25,8 @@ SOURCES += \
     Graphics/bernoullilemniscate.cpp \
     Graphics/graphicsitembase.cpp \
     Graphics/plane.cpp \
-    Graphics/dragonfractal.cpp
+    Graphics/dragonfractal.cpp \
+    Graphics/hauseindimetricproection.cpp
 
 HEADERS += \
 	MainWindow/mainwindow.h \
@@ -38,7 +39,9 @@ HEADERS += \
     Graphics/bernoullilemniscate.h \
     Graphics/graphicsitembase.h \
     Graphics/plane.h \
-    Graphics/dragonfractal.h
+    Graphics/dragonfractal.h \
+    Graphics/HauseInDimetricProection.h \
+    Graphics/hauseindimetricproection.h
 
 FORMS += \
     MainWindow/mainwindow.ui
