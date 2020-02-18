@@ -4,14 +4,14 @@
 #include <QChartView>
 #include <qchart.h>
 
-#include <Graphics/movablepoint.h>
+#include <Graphics/Basic/movablepoint.h>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui_(new Ui::MainWindow)
 {
     ui_->setupUi(this);
-    ui_->tabWidget->setCurrentIndex(3);
+    ui_->tabWidget->setCurrentIndex(4);
     setStyleSheet("font: 10pt 'Ubuntu';font-style: normal;");
 
     chart_ = new QChart();
@@ -47,6 +47,7 @@ MainWindow::MainWindow(QWidget *parent) :
     bLemniscat_ = new BernoulliLemniscate(chart_, transformation_);
     plane_ = new Plane(chart_, transformation_);
     dragon_ = new DragonFractal(chart_, transformation_);
+    house_ = new HauseInDimetricProection(chart_, transformation_);
 
     connect(ui_->checkBox, &QCheckBox::clicked, [=](bool value){ gasket_->setPointsNamesVisible(value); });
     connect(ui_->spinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setABGH(value); });
@@ -81,25 +82,25 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui_->spinBox_13, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation_->setAffineSystemWeight(value, 2); redraw(); });
     connect(ui_->tabWidget, &QTabWidget::tabBarClicked, this, [=](int index){
         if (index == 0) {
-            bLemniscat_->hide();
-            plane_->hide();
-            dragon_->hide();
+            bLemniscat_->hide(); plane_->hide();
+            dragon_->hide(); house_->hide();
             gasket_->show();
         } else if(index == 1){
-            gasket_->hide();
-            plane_->hide();
-            dragon_->hide();
+            gasket_->hide(); plane_->hide();
+            dragon_->hide(); house_->hide();
             bLemniscat_->show();
         } else if(index == 2){
-            gasket_->hide();
-            bLemniscat_->hide();
-            dragon_->hide();
+            gasket_->hide(); bLemniscat_->hide();
+            dragon_->hide(); house_->hide();
             plane_->show();
-        } if(index == 3){
-            gasket_->hide();
-            bLemniscat_->hide();
-            plane_->hide();
+        } else if(index == 3){
+            gasket_->hide(); bLemniscat_->hide();
+            plane_->hide(); house_->hide();
             dragon_->show();
+        } else if(index == 4){
+            gasket_->hide(); bLemniscat_->hide();
+            plane_->hide(); dragon_->hide();
+            house_->show();
         }
     });
 
@@ -128,7 +129,8 @@ MainWindow::MainWindow(QWidget *parent) :
     scene_->addItem(gasket_);   gasket_->hide();
     scene_->addItem(bLemniscat_); bLemniscat_->hide();
     scene_->addItem(plane_); plane_->hide();
-    scene_->addItem(dragon_);
+    scene_->addItem(dragon_); dragon_->hide();
+    scene_->addItem(house_);
 
     {
         // setting up affinePoints

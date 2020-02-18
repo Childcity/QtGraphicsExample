@@ -1,7 +1,7 @@
 #ifndef BERNOULLILEMNISCATE_H
 #define BERNOULLILEMNISCATE_H
 
-#include "graphicsitembase.h"
+#include "Basic/graphicsitembase.h"
 
 
 class BernoulliLemniscate : public QObject, public GraphicsItemBase {

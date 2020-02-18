@@ -1,9 +1,9 @@
 #ifndef Plane_H
 #define Plane_H
 
-#include "graphicsitembase.h"
-#include "movablepoint.h"
-#include "transformation2d.h"
+#include "Basic/graphicsitembase.h"
+#include "Basic/movablepoint.h"
+#include "Basic/transformation2d.h"
 
 #include <QChart>
 #include <QGraphicsItem>

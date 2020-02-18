@@ -1,8 +1,8 @@
 #ifndef GASKET_H
 #define GASKET_H
 
-#include "graphicsitembase.h"
-#include "transformation2d.h"
+#include "Basic/graphicsitembase.h"
+#include "Basic/transformation2d.h"
 
 #include <QChart>
 #include <QGraphicsItem>

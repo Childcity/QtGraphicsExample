@@ -1,18 +1,16 @@
 #ifndef HauseInDimetricProection_H
 #define HauseInDimetricProection_H
 
-#include "graphicsitembase.h"
-#include "transformation2d.h"
+#include "Basic/graphicsitembase.h"
+#include "Basic/transformation2d.h"
 
 #include <QChart>
-#include <QGraphicsItem>
-#include <random>
 
 using namespace QtCharts;
 
 class HauseInDimetricProection: public GraphicsItemBase {
 private:
-    QVector<QVector3D> housePoints_ {
+    std::vector<QVector3D> housePoints_ {
         {
             {200, 350, 350}, {400, 350, 350}, {400, 200, 350},
             {300, 100, 350}, {200, 200, 350}, {200, 350, 50},

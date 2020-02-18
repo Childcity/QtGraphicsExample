@@ -7,6 +7,8 @@
 #include <QGraphicsScene>
 #include <QThread>
 
+#include <Graphics/Basic/transformation3d.cpp>
+
 void HauseInDimetricProection::redraw() {
     GraphicsItemBase::redraw();
     update();
@@ -54,6 +56,9 @@ void HauseInDimetricProection::paint(QPainter *painter, const QStyleOptionGraphi
 
 void HauseInDimetricProection::transformateDatail()
 {
+    Transformation3D transformer(housePoints_);
+    transformer.rotate(1,1,1).rotate(2,1,3);
+
     GraphicsItemBase::transformateDatail();
     setTransform(transformation_->getTransformation().first);
 }

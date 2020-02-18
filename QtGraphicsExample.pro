@@ -17,31 +17,33 @@ SOURCES += \
         main.cpp \
 	MainWindow/mainwindow.cpp \
     Graphics/gasket.cpp \
-	Graphics/figure.cpp \
-	Graphics/circle.cpp \
-    Graphics/arc.cpp \
-    Graphics/movablepoint.cpp \
+        Graphics/Basic/figure.cpp \
+        Graphics/Basic/circle.cpp \
+    Graphics/Basic/arc.cpp \
+    Graphics/Basic/movablepoint.cpp \
     Graphics/bernoullilemniscate.cpp \
-    Graphics/graphicsitembase.cpp \
+    Graphics/Basic/graphicsitembase.cpp \
     Graphics/plane.cpp \
     Graphics/dragonfractal.cpp \
     Graphics/hauseindimetricproection.cpp \
-    Graphics/transformation2d.cpp
+    Graphics/Basic/transformation2d.cpp \
+    Graphics/Basic/transformation3d.cpp
 
 HEADERS += \
 	MainWindow/mainwindow.h \
     Graphics/gasket.h \
-	Graphics/figure.h \
-	Graphics/circle.h \
-    Graphics/arc.h \
-	Graphics/movablepoint.h \
+        Graphics/Basic/figure.h \
+        Graphics/Basic/circle.h \
+    Graphics/Basic/arc.h \
+        Graphics/Basic/movablepoint.h \
     Graphics/bernoullilemniscate.h \
-    Graphics/graphicsitembase.h \
+    Graphics/Basic/graphicsitembase.h \
     Graphics/plane.h \
     Graphics/dragonfractal.h \
     Graphics/HauseInDimetricProection.h \
     Graphics/hauseindimetricproection.h \
-    Graphics/transformation2d.h
+    Graphics/Basic/transformation2d.h \
+    Graphics/Basic/transformation3d.h
 
 FORMS += \
     MainWindow/mainwindow.ui
