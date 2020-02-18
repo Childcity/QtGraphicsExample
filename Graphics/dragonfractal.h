@@ -14,7 +14,7 @@ class DragonFractal: public GraphicsItemBase {
 private:
     constexpr static int iterCount = 50000;
 
-    std::array<QPointF, iterCount> points;
+    std::array<std::pair<QPointF, Qt::GlobalColor>, iterCount> points;
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;

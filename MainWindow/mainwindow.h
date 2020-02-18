@@ -6,6 +6,7 @@
 #include "Graphics/gasket.h"
 #include "Graphics/plane.h"
 #include "Graphics/dragonfractal.h"
+#include "Graphics/hauseindimetricproection.h"
 
 #include <QGraphicsScene>
 #include <QMainWindow>
@@ -43,6 +44,7 @@ private:
     BernoulliLemniscate *bLemniscat_;
     Plane *plane_;
     DragonFractal *dragon_;
+    HauseInDimetricProection *house_;
 
     Transformation *transformation_;
     QTimer *animationInterval_;

@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <qgraphicssceneevent.h>
 #include <QGraphicsScene>
+#include <QThread>
 
 void DragonFractal::redraw() {
     GraphicsItemBase::redraw();
@@ -14,6 +15,7 @@ void DragonFractal::redraw() {
 DragonFractal::DragonFractal(QChart *chart, Transformation *transformation)
     : GraphicsItemBase (chart, transformation)
 {
+    genDragon();
 }
 
 QRectF DragonFractal::boundingRect() const
@@ -31,19 +33,24 @@ QRectF DragonFractal::boundingRect() const
 
 
     return QRectF(160 + xDelta
-                  , 0 - 150 - yDelta
-                  , 430
-                  , 430);
+                  , 0 - 150 + yDelta
+                  , 400
+                  , 400);
 }
 
 void DragonFractal::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     GraphicsItemBase::paint(painter, option, widget);
 
-    painter->setPen(QPen(Qt::black, 1));
+    //genDragon(); // uncomment, if you want to see generation in real time
 
-    genDragon();
-    painter->drawPoints(points.begin(), points.size());
+    double yToMoveDragon = (boundingRect().center() - boundingRect().center() / 0.4).y();
+    QPointF deltaToMoveDragon(boundingRect().center().x(), yToMoveDragon);
+
+    for(const auto &p : points){
+        painter->setPen(QPen(p.second, 1));
+        painter->drawPoint((p.first * 30) + deltaToMoveDragon);
+    }
 
     transformateDatail();
 }
@@ -63,8 +70,8 @@ void DragonFractal::genDragon(){
 
     const auto getNextPoint = [&](size_t line, double x, double y){
         return QPointF {
-            inSystem[0 + line*7] * x + inSystem[1 + line*7] * y + inSystem[2 + line*7]
-                    , inSystem[3 + line*7] * x + inSystem[4 + line*7] * y + inSystem[5 + line*7]
+            inSystem[0 + line*7] * x + inSystem[1 + line*7] * y + inSystem[2 + line*7],
+            inSystem[3 + line*7] * x + inSystem[4 + line*7] * y + inSystem[5 + line*7]
 
         };
     };
@@ -72,18 +79,16 @@ void DragonFractal::genDragon(){
     QPointF nextPoint;
     for (size_t i = 0; i < points.size(); ++i) {
 
+        Qt::GlobalColor color;
         if(genRandom(0, 1) < inSystem[6]){
+            color = Qt::black;
             nextPoint = getNextPoint(0, nextPoint.x(), nextPoint.y());
         } else {
+            color = Qt::red;
             nextPoint = getNextPoint(1, nextPoint.x(), nextPoint.y());
         }
 
-        nextPoint = {nextPoint.x()+60, nextPoint.y()+60};
-
-        points[i] = {
-            nextPoint.x() + boundingRect().bottomLeft().x(),
-            nextPoint.y() + boundingRect().center().y()
-        };
+        points[i] = {nextPoint, color};
     }
 }
 

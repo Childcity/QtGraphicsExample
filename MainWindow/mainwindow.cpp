@@ -133,16 +133,17 @@ MainWindow::MainWindow(QWidget *parent) :
     {
         // setting up affinePoints
         QVector<MovablePoint::Ptr> affinePoints(3);
-        QVector<MovablePoint::Ptr> realPoints(3);
+        //QVector<MovablePoint::Ptr> realPoints(3);
         QVector<QPointF> deltas(3);
 
         for (int i = 0; i < affinePoints.size(); ++i) {
-            realPoints[i] = new MovablePoint(15, Qt::yellow, {9+49}, chart_);
-            realPoints[i]->setFlag(QGraphicsItem::ItemIsMovable, false);
-            realPoints[i]->setAcceptedMouseButtons(Qt::MouseButton::NoButton);
+            /*
+                realPoints[i] = new MovablePoint(15, Qt::yellow, {9+49}, chart_);
+                realPoints[i]->setFlag(QGraphicsItem::ItemIsMovable, false);
+                realPoints[i]->setAcceptedMouseButtons(Qt::MouseButton::NoButton);
+            */
 
             affinePoints[i] = new MovablePoint(6, Qt::green, {i+49});
-            //auto newPlace = QPointF(i==0 ? gasket_->getCoordYEnd() : i==1 ? gasket_->pos() : gasket_->getCoordXEnd());
             auto newPlace = i==0 ? gasket_->boundingRect().bottomLeft()
                                  : i==1 ? chart_->boundingRect().topLeft()
                                         : gasket_->boundingRect().topRight();
@@ -153,14 +154,16 @@ MainWindow::MainWindow(QWidget *parent) :
                 transformation_->setAffineSystemPoint(value - deltas[i], i);
                 redraw();
 
-                auto realPlace = i==0 ? chart_->boundingRect().bottomLeft()
+                /*
+                  auto realPlace = i==0 ? chart_->boundingRect().bottomLeft()
                                       : i==1 ? chart_->boundingRect().topLeft()
                                              : chart_->boundingRect().topRight();
-                realPoints[i]->setPos(realPlace);
+                  realPoints[i]->setPos(realPlace);
 
-                // show yello proection of green points
-                if(ui_->checkBox_2->isChecked()) realPoints[i]->show();
-                else realPoints[i]->hide();
+                  // show yello proection of green points
+                  if(ui_->checkBox_2->isChecked()) realPoints[i]->show();
+                  else realPoints[i]->hide();
+                */
             });
 
             affinePoints[i]->setPos(mappedPoss);
