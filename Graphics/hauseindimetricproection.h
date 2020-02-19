@@ -10,7 +10,7 @@ using namespace QtCharts;
 
 class HauseInDimetricProection: public GraphicsItemBase {
 private:
-    std::vector<QVector3D> housePoints_ {
+    std::vector<QVector3D> points_ {
         {
             {200, 350, 350}, {400, 350, 350}, {400, 200, 350},
             {300, 100, 350}, {200, 200, 350}, {200, 350, 50},

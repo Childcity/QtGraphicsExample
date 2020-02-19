@@ -46,9 +46,11 @@ void HauseInDimetricProection::paint(QPainter *painter, const QStyleOptionGraphi
     //painter->setPen(QPen(p.second, 1));
 
 
-
-    for (const auto &p : housePoints_) {
-        painter->drawEllipse(p.toPointF(), 5, 5);
+    for (const auto &p : points_) {
+        QMatrix4x4 proection;
+        proection.setToIdentity();
+        proection.rotate(30, {0,1,0});
+        painter->drawEllipse(proection.map(p).toPointF(), 5, 5);
     }
 
     transformateDatail();
@@ -56,9 +58,6 @@ void HauseInDimetricProection::paint(QPainter *painter, const QStyleOptionGraphi
 
 void HauseInDimetricProection::transformateDatail()
 {
-    Transformation3D transformer(housePoints_);
-    transformer.rotate(1,1,1).rotate(2,1,3);
-
     GraphicsItemBase::transformateDatail();
     setTransform(transformation_->getTransformation().first);
 }
