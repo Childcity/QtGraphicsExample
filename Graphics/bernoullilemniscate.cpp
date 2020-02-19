@@ -32,21 +32,21 @@ double BernoulliLemniscate::getArea() const { return getFocusSQRT2MM() * getFocu
 
 double BernoulliLemniscate::getLength() const { return getFocusSQRT2MM() * 5.244; }
 
-BernoulliLemniscate::BernoulliLemniscate(QChart *chart, Transformation2D *transformation)
-    : GraphicsItemBase (chart, transformation)
+BernoulliLemniscate::BernoulliLemniscate(QChart *chart, Transformation2D *transformation2d)
+    : GraphicsItemBase (chart, transformation2d)
 {}
 
 BernoulliLemniscate::~BernoulliLemniscate(){}
 
 QRectF BernoulliLemniscate::boundingRect() const
 {
-    double xDelta = transformation_->getDeltaWidth()*k
-            + (transformation_->isProectiveEnabled() || transformation_->isAffineEnabled()
+    double xDelta = transformation2d_->getDeltaWidth()*k
+            + (transformation2d_->isProectiveEnabled() || transformation2d_->isAffineEnabled()
                ? affineXYDelta.x()*k
                : 0);
 
-    double yDelta = transformation_->getDeltaHeight()*k
-            - (transformation_->isProectiveEnabled() || transformation_->isAffineEnabled()
+    double yDelta = transformation2d_->getDeltaHeight()*k
+            - (transformation2d_->isProectiveEnabled() || transformation2d_->isAffineEnabled()
                ? affineXYDelta.y()*k
                : 0);
 
@@ -144,7 +144,7 @@ void BernoulliLemniscate::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void BernoulliLemniscate::transformateDatail()
 {
     GraphicsItemBase::transformateDatail();
-    setTransform(transformation_->getTransformation().first);
+    setTransform(transformation2d_->getTransformation().first);
 }
 
 QPair<QVector<double>, QVector<QPointF>> BernoulliLemniscate::getPoints(double c, QPointF delta)

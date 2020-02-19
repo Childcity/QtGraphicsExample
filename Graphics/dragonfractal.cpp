@@ -12,8 +12,8 @@ void DragonFractal::redraw() {
     update();
 }
 
-DragonFractal::DragonFractal(QChart *chart, Transformation2D *transformation)
-    : GraphicsItemBase (chart, transformation)
+DragonFractal::DragonFractal(QChart *chart, Transformation2D *transformation2d)
+    : GraphicsItemBase (chart, transformation2d)
 {
     genDragon();
 }
@@ -21,13 +21,13 @@ DragonFractal::DragonFractal(QChart *chart, Transformation2D *transformation)
 QRectF DragonFractal::boundingRect() const
 {
     // outer most edges
-    double xDelta = transformation_->getDeltaWidth()*k
-            + (transformation_->isProectiveEnabled() || transformation_->isAffineEnabled()
+    double xDelta = transformation2d_->getDeltaWidth()*k
+            + (transformation2d_->isProectiveEnabled() || transformation2d_->isAffineEnabled()
                ? affineXYDelta.x()*k
                : 0);
 
-    double yDelta = transformation_->getDeltaHeight()*k
-            - (transformation_->isProectiveEnabled() || transformation_->isAffineEnabled()
+    double yDelta = transformation2d_->getDeltaHeight()*k
+            - (transformation2d_->isProectiveEnabled() || transformation2d_->isAffineEnabled()
                ? affineXYDelta.y()*k
                : 0);
 
@@ -58,7 +58,7 @@ void DragonFractal::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 void DragonFractal::transformateDatail()
 {
     GraphicsItemBase::transformateDatail();
-    setTransform(transformation_->getTransformation().first);
+    setTransform(transformation2d_->getTransformation().first);
 }
 
 void DragonFractal::genDragon(){

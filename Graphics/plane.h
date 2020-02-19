@@ -23,7 +23,7 @@ protected:
     void mousePressEvent (QGraphicsSceneMouseEvent * event) override;
 
 public:
-    Plane(QChart *chart, Transformation2D *transformation);
+    Plane(QChart *chart, Transformation2D *transformation2d);
 
     ~Plane() override;
 

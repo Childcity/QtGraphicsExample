@@ -20,7 +20,7 @@ protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
 public:
-    DragonFractal(QChart *chart, Transformation2D *transformation);
+    DragonFractal(QChart *chart, Transformation2D *transformation2d);
 
     QRectF boundingRect() const override;
 

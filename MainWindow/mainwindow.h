@@ -46,7 +46,7 @@ private:
     DragonFractal *dragon_;
     HauseInDimetricProection *house_;
 
-    Transformation2D *transformation_;
+    Transformation2D *transformation2d_;
     QTimer *animationInterval_;
 };
 

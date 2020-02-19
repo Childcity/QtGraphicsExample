@@ -4,9 +4,9 @@
 #include <QValueAxis>
 #include <QGraphicsScene>
 
-GraphicsItemBase::GraphicsItemBase(QChart *chart, Transformation2D *transformation)
+GraphicsItemBase::GraphicsItemBase(QChart *chart, Transformation2D *transformation2d)
     : chart_(chart)
-    , transformation_(transformation)
+    , transformation2d_(transformation2d)
 {
     // save default chart pos
     chartPos_ = chart_->pos();
@@ -56,10 +56,10 @@ void GraphicsItemBase::transformateDatail() {
     // set default chart pos
     chart_->setPos(chartPos_);
 
-    if(transformation_->isAffineEnabled() || transformation_->isProectiveEnabled())
+    if(transformation2d_->isAffineEnabled() || transformation2d_->isProectiveEnabled())
         chart_->setPos(pos());
 
-    chart_->setTransform(transformation_->getTransformation().second);
+    chart_->setTransform(transformation2d_->getTransformation().second);
 }
 
 void GraphicsItemBase::redraw(){

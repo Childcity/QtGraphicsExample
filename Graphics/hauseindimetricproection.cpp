@@ -3,36 +3,34 @@
 #include <QPainter>
 #include <QPen>
 #include <QDebug>
-#include <qgraphicssceneevent.h>
-#include <QGraphicsScene>
-#include <QThread>
 
-#include <Graphics/Basic/transformation3d.cpp>
 
 void HauseInDimetricProection::redraw() {
     GraphicsItemBase::redraw();
     update();
 }
 
-HauseInDimetricProection::HauseInDimetricProection(QChart *chart, Transformation2D *transformation)
-    : GraphicsItemBase (chart, transformation)
+HauseInDimetricProection::HauseInDimetricProection(QChart *chart, Transformation2D *transformation2d)
+    : GraphicsItemBase (chart, transformation2d)
 {
-
+    float alpha_ = 60;
+    float alpha_sq = sinf(alpha_) * sinf(alpha_);
+    float betta = sqrtf(alpha_sq / (1 - alpha_sq));
+    transformation3d_.setRotationAngles({alpha_, betta, 0})->rotate();
 }
 
 QRectF HauseInDimetricProection::boundingRect() const
 {
     // outer most edges
-    double xDelta = transformation_->getDeltaWidth()*k
-            + (transformation_->isProectiveEnabled() || transformation_->isAffineEnabled()
+    double xDelta = transformation2d_->getDeltaWidth()*k
+            + (transformation2d_->isProectiveEnabled() || transformation2d_->isAffineEnabled()
                ? affineXYDelta.x()*k
                : 0);
 
-    double yDelta = transformation_->getDeltaHeight()*k
-            - (transformation_->isProectiveEnabled() || transformation_->isAffineEnabled()
+    double yDelta = transformation2d_->getDeltaHeight()*k
+            - (transformation2d_->isProectiveEnabled() || transformation2d_->isAffineEnabled()
                ? affineXYDelta.y()*k
                : 0);
-
 
     return QRectF(160 + xDelta
                   , 0 - 150 - yDelta
@@ -43,23 +41,27 @@ QRectF HauseInDimetricProection::boundingRect() const
 void HauseInDimetricProection::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     GraphicsItemBase::paint(painter, option, widget);
-    //painter->setPen(QPen(p.second, 1));
 
+    vector<QPointF> mappedTo2dProection = transformation3d_.mapTo2d(points_);
 
-    for (const auto &p : points_) {
-        QMatrix4x4 proection;
-        proection.setToIdentity();
-        proection.rotate(30, {0,1,0});
-        painter->drawEllipse(proection.map(p).toPointF(), 5, 5);
+    painter->setPen(QPen(Qt::red, 2));
+    for (const auto &p : mappedTo2dProection) {
+        painter->drawEllipse(p, 5, 5);
     }
 
+    painter->setPen(QPen(Qt::black, 2));
+    for (const auto &l : lines_) {
+        painter->drawLine(mappedTo2dProection[l.first], mappedTo2dProection[l.second]);
+    }
+
+    painter->drawRect(boundingRect());
     transformateDatail();
 }
 
 void HauseInDimetricProection::transformateDatail()
 {
     GraphicsItemBase::transformateDatail();
-    setTransform(transformation_->getTransformation().first);
+    setTransform(transformation2d_->getTransformation().first);
 }
 
 void HauseInDimetricProection::genHouse()

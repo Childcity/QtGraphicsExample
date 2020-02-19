@@ -59,8 +59,8 @@ void Gasket::setPB(double BP)
     redraw();
 }
 
-Gasket::Gasket(QChart *chart, Transformation2D *transformation)
-    : GraphicsItemBase (chart, transformation)
+Gasket::Gasket(QChart *chart, Transformation2D *transformation2d)
+    : GraphicsItemBase (chart, transformation2d)
 {}
 
 Gasket::~Gasket(){}
@@ -68,13 +68,13 @@ Gasket::~Gasket(){}
 QRectF Gasket::boundingRect() const
 {
     // outer most edges
-    double xDelta = transformation_->getDeltaWidth()*k
-            + (transformation_->isProectiveEnabled() || transformation_->isAffineEnabled()
+    double xDelta = transformation2d_->getDeltaWidth()*k
+            + (transformation2d_->isProectiveEnabled() || transformation2d_->isAffineEnabled()
                ? affineXYDelta.x()*k
                : 0);
 
-    double yDelta = transformation_->getDeltaHeight()*k
-            - (transformation_->isProectiveEnabled() || transformation_->isAffineEnabled()
+    double yDelta = transformation2d_->getDeltaHeight()*k
+            - (transformation2d_->isProectiveEnabled() || transformation2d_->isAffineEnabled()
                ? affineXYDelta.y()*k
                : 0);
 
@@ -95,7 +95,7 @@ void Gasket::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 void Gasket::transformateDatail()
 {
     GraphicsItemBase::transformateDatail();
-    setTransform(transformation_->getTransformation().first);
+    setTransform(transformation2d_->getTransformation().first);
 }
 
 void Gasket::drawSymetricLines(QPainter *painter, const QPointF &stP, const QVector<QPointF> &arc)

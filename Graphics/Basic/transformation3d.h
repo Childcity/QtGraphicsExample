@@ -8,11 +8,13 @@
 
 class Transformation3D {
 private:
-    std::vector<QVector3D> points_{};
+    QVector3D xyzRotationAngles_;
+    QMatrix4x4 proection_;
+    //std::vector<QVector3D> points3d_;
 
 public:
-    explicit Transformation3D(std::vector<QVector3D> points)
-        : points_(std::move(points))
+    explicit Transformation3D(QVector3D xyzRotationAngles = QVector3D())
+        : xyzRotationAngles_(std::move(xyzRotationAngles))
     {}
 
     Transformation3D *rotate(double angle, const QVector3D &axis )
@@ -33,6 +35,37 @@ public:
         return this;
     }
 
+    Transformation3D *setRotationAngles(QVector3D rotationAngles)
+    {
+        xyzRotationAngles_ = std::move(rotationAngles);
+        proection_.setToIdentity();
+        return this;
+    }
+
+//    Transformation3D *set3dPoints(std::vector<QVector3D> points3d)
+//    {
+//        points3d_ = std::move(points3d);
+//        return this;
+//    }
+
+    Transformation3D *rotate()
+    {
+        proection_.rotate(xyzRotationAngles_.x(), {1, 0, 0});
+        proection_.rotate(xyzRotationAngles_.y(), {0, 1, 0});
+        proection_.rotate(xyzRotationAngles_.z(), {0, 0, 1});
+        return this;
+    }
+
+    std::vector<QPointF> mapTo2d(const std::vector<QVector3D> &points3d) const
+    {
+        std::vector<QPointF> mapped;
+
+        for (const auto &p : points3d) {
+            mapped.emplace_back(proection_.map(p).toPointF());
+        }
+
+        return mapped;
+    }
 };
 
 #endif // TRANSFORMATION3D_H

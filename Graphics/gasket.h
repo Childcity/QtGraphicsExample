@@ -25,7 +25,7 @@ protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
 public:
-    Gasket(QChart *chart, Transformation2D *transformation);
+    Gasket(QChart *chart, Transformation2D *transformation2d);
 
     ~Gasket() override;
 

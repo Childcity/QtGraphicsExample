@@ -18,7 +18,7 @@ protected:
     QChart *chart_;
     QPointF chartPos_;
 
-    const Transformation2D *transformation_;
+    const Transformation2D *transformation2d_;
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
@@ -27,7 +27,7 @@ protected:
     virtual void redraw();
 
 public:
-    GraphicsItemBase(QChart *chart, Transformation2D *transformation);
+    GraphicsItemBase(QChart *chart, Transformation2D *transformation2d);
 
     QPointF getCoordXEnd();
 

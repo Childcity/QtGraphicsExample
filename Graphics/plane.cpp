@@ -61,8 +61,8 @@ void Plane::animateTo(QString figureFilePath, bool isForwardAnimation)
 }
 
 
-Plane::Plane(QChart *chart, Transformation2D *transformation)
-    : GraphicsItemBase (chart, transformation)
+Plane::Plane(QChart *chart, Transformation2D *transformation2d)
+    : GraphicsItemBase (chart, transformation2d)
 {
     createPlane();
 
@@ -89,13 +89,13 @@ Plane::~Plane()
 QRectF Plane::boundingRect() const
 {
     // outer most edges
-    double xDelta = transformation_->getDeltaWidth()*k
-            + (transformation_->isProectiveEnabled() || transformation_->isAffineEnabled()
+    double xDelta = transformation2d_->getDeltaWidth()*k
+            + (transformation2d_->isProectiveEnabled() || transformation2d_->isAffineEnabled()
                ? affineXYDelta.x()*k
                : 0);
 
-    double yDelta = transformation_->getDeltaHeight()*k
-            - (transformation_->isProectiveEnabled() || transformation_->isAffineEnabled()
+    double yDelta = transformation2d_->getDeltaHeight()*k
+            - (transformation2d_->isProectiveEnabled() || transformation2d_->isAffineEnabled()
                ? affineXYDelta.y()*k
                : 0);
 
@@ -294,7 +294,7 @@ void Plane::clearTringle()
 void Plane::transformateDatail()
 {
     GraphicsItemBase::transformateDatail();
-    setTransform(transformation_->getTransformation().first);
+    setTransform(transformation2d_->getTransformation().first);
 }
 
 MovablePoint *Plane::createPlanePoint(const QPointF &point) {
