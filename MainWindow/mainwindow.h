@@ -34,7 +34,8 @@ protected:
 
 private:
     void redraw();
-    void setAnimation();
+
+    void update3dTransform();
 
 private:
     Ui::MainWindow *ui_;
@@ -46,8 +47,8 @@ private:
     DragonFractal *dragon_;
     HauseInDimetricProection *house_;
 
-    Transformation2D *transformation2d_;
-    QTimer *animationInterval_;
+    Transformation2D transformation2d_;
+    Transformation3D transformation3d_;
 };
 
 #endif // MAINWINDOW_H

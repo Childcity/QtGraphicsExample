@@ -34,7 +34,9 @@ double BernoulliLemniscate::getLength() const { return getFocusSQRT2MM() * 5.244
 
 BernoulliLemniscate::BernoulliLemniscate(QChart *chart, Transformation2D *transformation2d)
     : GraphicsItemBase (chart, transformation2d)
-{}
+{
+    tangentedPoint_ = {327, 78};
+}
 
 BernoulliLemniscate::~BernoulliLemniscate(){}
 

@@ -33,13 +33,13 @@ private:
         {0, 5}, {1, 6}, {2, 7}, {3, 8}, {4, 9} // connect front & back
     };
 
-    Transformation3D transformation3d_;
+    Transformation3D *transformation3d_;
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
 public:
-    HauseInDimetricProection(QChart *chart, Transformation2D *transformation2d);
+    HauseInDimetricProection(QChart *chart, Transformation2D *transformation2d, Transformation3D *transformation3d);
 
     QRectF boundingRect() const override;
 

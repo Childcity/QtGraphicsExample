@@ -36,18 +36,15 @@ MainWindow::MainWindow(QWidget *parent) :
     chart_->setAxisX(axisX);
     chart_->setAxisY(axisY);
 
-
     ui_->chartView->setRenderHint(QPainter::Antialiasing);
     ui_->chartView->setChart(chart_);
 
-    transformation2d_ = new Transformation2D();
-
     // create our Gasket object and add it to the scene
-    gasket_ = new Gasket(chart_, transformation2d_);
-    bLemniscat_ = new BernoulliLemniscate(chart_, transformation2d_);
-    plane_ = new Plane(chart_, transformation2d_);
-    dragon_ = new DragonFractal(chart_, transformation2d_);
-    house_ = new HauseInDimetricProection(chart_, transformation2d_);
+    gasket_ = new Gasket(chart_, &transformation2d_);
+    bLemniscat_ = new BernoulliLemniscate(chart_, &transformation2d_);
+    plane_ = new Plane(chart_, &transformation2d_);
+    dragon_ = new DragonFractal(chart_, &transformation2d_);
+    house_ = new HauseInDimetricProection(chart_, &transformation2d_, &transformation3d_);
 
     connect(ui_->checkBox, &QCheckBox::clicked, [=](bool value){ gasket_->setPointsNamesVisible(value); });
     connect(ui_->spinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setABGH(value); });
@@ -59,7 +56,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui_->spinBox_8, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setPB(value); });
 
     connect(ui_->spinBox_14, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ bLemniscat_->setFocus(value); });
-    connect(ui_->checkBox_4, &QCheckBox::clicked, this, [=](bool value){ if(value) animationInterval_->start(); else animationInterval_->stop(); });
     connect(bLemniscat_, &BernoulliLemniscate::sigCurvatureRadiusChanged, this, [=](double curvRadius){ ui_->label_22->setText(QString("%1 (deg)").arg((curvRadius*180.)/M_PI)); });
     connect(bLemniscat_, &BernoulliLemniscate::sigFocusChanged, this, [=](double focus){
         ui_->spinBox_14->setValue(static_cast<int>(focus));
@@ -72,14 +68,21 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui_->checkBox_6, &QCheckBox::clicked, this, [=](bool value){ plane_->animateTo(ui_->lineEdit->text(), value); });
 
     // Transformation2D buttons
-    connect(ui_->spinBox_2, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation2d_->setDeltaHeight(value); redraw(); });
-    connect(ui_->spinBox_10, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation2d_->setDeltaWidth(value); redraw();  });
-    connect(ui_->spinBox_9, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation2d_->setRotateAncle(value); redraw();  });
-    connect(ui_->checkBox_2, &QCheckBox::clicked, [=](bool value){ transformation2d_->setProectiveEnabled(value); redraw();  });
-    connect(ui_->checkBox_3, &QCheckBox::clicked, [=](bool value){ transformation2d_->setAffineEnabled(value); redraw();  });
-    connect(ui_->spinBox_11, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation2d_->setAffineSystemWeight(value, 0); redraw(); });
-    connect(ui_->spinBox_12, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation2d_->setAffineSystemWeight(value, 1); redraw(); });
-    connect(ui_->spinBox_13, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation2d_->setAffineSystemWeight(value, 2); redraw(); });
+    connect(ui_->spinBox_2, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation2d_.setDeltaHeight(value); redraw(); });
+    connect(ui_->spinBox_10, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation2d_.setDeltaWidth(value); redraw();  });
+    connect(ui_->spinBox_9, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation2d_.setRotateAncle(value); redraw();  });
+    connect(ui_->checkBox_2, &QCheckBox::clicked, [=](bool value){ transformation2d_.setProectiveEnabled(value); redraw();  });
+    connect(ui_->checkBox_3, &QCheckBox::clicked, [=](bool value){ transformation2d_.setAffineEnabled(value); redraw();  });
+    connect(ui_->spinBox_11, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation2d_.setAffineSystemWeight(value, 0); redraw(); });
+    connect(ui_->spinBox_12, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation2d_.setAffineSystemWeight(value, 1); redraw(); });
+    connect(ui_->spinBox_13, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ transformation2d_.setAffineSystemWeight(value, 2); redraw(); });
+
+    // Transformation3D buttons
+    connect(ui_->spinBox_15, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::update3dTransform);
+    connect(ui_->spinBox_16, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::update3dTransform);
+    connect(ui_->spinBox_17, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::update3dTransform);
+    connect(ui_->spinBox_17, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::update3dTransform);
+
     connect(ui_->tabWidget, &QTabWidget::tabBarClicked, this, [=](int index){
         if (index == 0) {
             bLemniscat_->hide(); plane_->hide();
@@ -113,11 +116,11 @@ MainWindow::MainWindow(QWidget *parent) :
         QPointF delta = mappedPos - gasket_->pos();
         rotatePoint->setPos(mappedPos);
 
-        transformation2d_->setRotatePoint(gasket_->pos());
+        transformation2d_.setRotatePoint(gasket_->pos());
         connect(rotatePoint, &MovablePoint::positionChanged, this, [=](const QPointF &value){
             ui_->checkBox_2->isChecked()||ui_->checkBox_3->isChecked()
-                    ? transformation2d_->setRotatePoint(value)
-                    : transformation2d_->setRotatePoint(value - delta);
+                    ? transformation2d_.setRotatePoint(value)
+                    : transformation2d_.setRotatePoint(value - delta);
             redraw();
         });
     }
@@ -131,6 +134,8 @@ MainWindow::MainWindow(QWidget *parent) :
     scene_->addItem(plane_); plane_->hide();
     scene_->addItem(dragon_); dragon_->hide();
     scene_->addItem(house_);
+    update3dTransform();
+
 
     {
         // setting up affinePoints
@@ -153,7 +158,7 @@ MainWindow::MainWindow(QWidget *parent) :
             deltas[i] = mappedPoss - newPlace;
 
             connect(affinePoints[i], &MovablePoint::positionChanged, this, [=](const QPointF &value){
-                transformation2d_->setAffineSystemPoint(value - deltas[i], i);
+                transformation2d_.setAffineSystemPoint(value - deltas[i], i);
                 redraw();
 
                 /*
@@ -173,7 +178,6 @@ MainWindow::MainWindow(QWidget *parent) :
         }
     }
 
-    setAnimation();
 //     next doesn'tmP need, because if we provide parent for MovablePoint object (chart_), it automaticaly adds to scene_
 //     with chart_
 //    scene_->addItem(rotatePoint);
@@ -200,31 +204,31 @@ void MainWindow::redraw()
     gasket_->redraw();
     bLemniscat_->redraw();
     plane_->redraw();
+    dragon_->redraw();
+    house_->redraw();
 }
 
-void MainWindow::setAnimation()
+void MainWindow::update3dTransform()
 {
-    const int frameCount = 50;
+    const auto toRadian = [](float rotateAncle_){ return static_cast<float>(M_PI/180. * rotateAncle_); };
 
-    animationInterval_ = new QTimer(this);
+    float alpha = ui_->spinBox_15->value();
+    float betta = ui_->spinBox_16->value();
+    float gamma = ui_->spinBox_17->value();
 
-    connect(animationInterval_, &QTimer::timeout, this, [&]{
-        QTimeLine *timeLine = new QTimeLine(QRandomGenerator::global()->bounded(1000, 2500), this);
-        timeLine->setFrameRange(0, frameCount);
+    transformation3d_.setXRotationAngles(alpha);
 
-        double randFocus = QRandomGenerator::global()->bounded(13, 80);
-        double oldFocus = bLemniscat_->getFocus();
-        double animationStep = (randFocus - oldFocus)/frameCount;
+    if(ui_->checkBox_7->isChecked()){ // for Dimetri proection
+        float alphaRad = toRadian(alpha);
+        float sinAlphaRad = sinf(alphaRad) * sinf(alphaRad);
+        betta = sqrtf(sinAlphaRad / (1 - sinAlphaRad)) * (180./M_PI);
+        ui_->spinBox_16->setValue(betta);
+    }
 
-        connect(timeLine, &QTimeLine::frameChanged, this, [=]{
-            double newFocus = bLemniscat_->getFocus() + animationStep;
-            bLemniscat_->setFocus(newFocus);
-        });
+    transformation3d_.setYRotationAngles(betta);
+    transformation3d_.setZRotationAngles(gamma);
 
-        timeLine->start();
-    });
-
-    animationInterval_->start(2000);
+    redraw();
 }
 
 MainWindow::~MainWindow()
@@ -232,5 +236,4 @@ MainWindow::~MainWindow()
     delete ui_;
     delete gasket_;
     chart_->deleteLater();
-    delete transformation2d_;
 }
