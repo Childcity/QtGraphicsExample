@@ -63,11 +63,13 @@ void DragonFractal::transformateDatail()
 
 void DragonFractal::genDragon(){
 
+    // Init Dragon fractal coeficients
     static std::vector<double> inSystem = {
         0.824074, 0.281482, -1.882290, -0.212346, 0.864198, -0.110607, 0.787473,
         0.088272, 0.520988, 0.785360, -0.463889, -0.377778, 8.095795, 0.212527
     };
 
+    // Lambda function, for getting Point by x, y and line in equation
     const auto getNextPoint = [&](size_t line, double x, double y){
         return QPointF {
             inSystem[0 + line*7] * x + inSystem[1 + line*7] * y + inSystem[2 + line*7],
@@ -75,6 +77,8 @@ void DragonFractal::genDragon(){
 
         };
     };
+
+    // Generate fractal by iteration method (points.size() iteretions)
 
     QPointF nextPoint;
     for (size_t i = 0; i < points.size(); ++i) {

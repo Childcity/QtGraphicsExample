@@ -82,6 +82,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui_->spinBox_16, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::update3dTransform);
     connect(ui_->spinBox_17, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::update3dTransform);
     connect(ui_->spinBox_17, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::update3dTransform);
+    connect(ui_->checkBox_7, &QCheckBox::clicked, this, &MainWindow::update3dTransform);
 
     connect(ui_->tabWidget, &QTabWidget::tabBarClicked, this, [=](int index){
         if (index == 0) {
@@ -210,23 +211,20 @@ void MainWindow::redraw()
 
 void MainWindow::update3dTransform()
 {
-    const auto toRadian = [](float rotateAncle_){ return static_cast<float>(M_PI/180. * rotateAncle_); };
+    const auto toRadian = [](float rotateAncle_){ return static_cast<float>(M_PI/180. * static_cast<double>(rotateAncle_)); };
 
     float alpha = ui_->spinBox_15->value();
     float betta = ui_->spinBox_16->value();
     float gamma = ui_->spinBox_17->value();
 
-    transformation3d_.setXRotationAngles(alpha);
-
     if(ui_->checkBox_7->isChecked()){ // for Dimetri proection
         float alphaRad = toRadian(alpha);
         float sinAlphaRad = sinf(alphaRad) * sinf(alphaRad);
-        betta = sqrtf(sinAlphaRad / (1 - sinAlphaRad)) * (180./M_PI);
-        ui_->spinBox_16->setValue(betta);
+        betta = sqrtf(sinAlphaRad / (1.f - sinAlphaRad)) * static_cast<float>(180./M_PI);
+        ui_->spinBox_16->setValue(static_cast<int>(betta));
     }
 
-    transformation3d_.setYRotationAngles(betta);
-    transformation3d_.setZRotationAngles(gamma);
+    transformation3d_.setRotationAngles({alpha, betta, gamma});
 
     redraw();
 }

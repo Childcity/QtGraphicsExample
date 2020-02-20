@@ -14,10 +14,7 @@ void HauseInDimetricProection::redraw()
 HauseInDimetricProection::HauseInDimetricProection(QChart *chart, Transformation2D *transformation2d, Transformation3D *transformation3d)
     : GraphicsItemBase (chart, transformation2d)
     , transformation3d_(transformation3d)
-{
-    float alpha_ = 20;
-    //transformation3d_->setRotationAngles({alpha_, betta, 0});
-}
+{}
 
 QRectF HauseInDimetricProection::boundingRect() const
 {
@@ -34,8 +31,8 @@ QRectF HauseInDimetricProection::boundingRect() const
 
     return QRectF(160 + xDelta
                   , 0 - 150 - yDelta
-                  , 430
-                  , 430);
+                  , 500
+                  , 500);
 }
 
 void HauseInDimetricProection::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -61,7 +58,7 @@ void HauseInDimetricProection::paint(QPainter *painter, const QStyleOptionGraphi
         painter->drawLine(points2d[l.first], points2d[l.second]);
     }
 
-    painter->drawRect(boundingRect());
+    //painter->drawRect(boundingRect());
     transformateDatail();
 }
 
