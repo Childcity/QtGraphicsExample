@@ -27,7 +27,8 @@ SOURCES += \
     Graphics/dragonfractal.cpp \
     Graphics/hauseindimetricproection.cpp \
     Graphics/Basic/transformation2d.cpp \
-    Graphics/Basic/transformation3d.cpp
+    Graphics/Basic/transformation3d.cpp \
+    Graphics/elliptichyperboloid.cpp
 
 HEADERS += \
 	MainWindow/mainwindow.h \
@@ -43,7 +44,8 @@ HEADERS += \
     Graphics/HauseInDimetricProection.h \
     Graphics/hauseindimetricproection.h \
     Graphics/Basic/transformation2d.h \
-    Graphics/Basic/transformation3d.h
+    Graphics/Basic/transformation3d.h \
+    Graphics/elliptichyperboloid.h
 
 FORMS += \
     MainWindow/mainwindow.ui

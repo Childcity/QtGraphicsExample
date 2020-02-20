@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui_(new Ui::MainWindow)
 {
     ui_->setupUi(this);
-    ui_->tabWidget->setCurrentIndex(4);
+    ui_->tabWidget->setCurrentIndex(5);
     setStyleSheet("font: 10pt 'Ubuntu';font-style: normal;");
 
     chart_ = new QChart();
@@ -45,6 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
     plane_ = new Plane(chart_, &transformation2d_);
     dragon_ = new DragonFractal(chart_, &transformation2d_);
     house_ = new HauseInDimetricProection(chart_, &transformation2d_, &transformation3d_);
+    hyperboloid_ = new EllipticHyperboloid(chart_, &transformation2d_, &transformation3d_);
 
     connect(ui_->checkBox, &QCheckBox::clicked, [=](bool value){ gasket_->setPointsNamesVisible(value); });
     connect(ui_->spinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ gasket_->setABGH(value); });
@@ -84,29 +85,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui_->spinBox_17, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::update3dTransform);
     connect(ui_->checkBox_7, &QCheckBox::clicked, this, &MainWindow::update3dTransform);
 
-    connect(ui_->tabWidget, &QTabWidget::tabBarClicked, this, [=](int index){
-        if (index == 0) {
-            bLemniscat_->hide(); plane_->hide();
-            dragon_->hide(); house_->hide();
-            gasket_->show();
-        } else if(index == 1){
-            gasket_->hide(); plane_->hide();
-            dragon_->hide(); house_->hide();
-            bLemniscat_->show();
-        } else if(index == 2){
-            gasket_->hide(); bLemniscat_->hide();
-            dragon_->hide(); house_->hide();
-            plane_->show();
-        } else if(index == 3){
-            gasket_->hide(); bLemniscat_->hide();
-            plane_->hide(); house_->hide();
-            dragon_->show();
-        } else if(index == 4){
-            gasket_->hide(); bLemniscat_->hide();
-            plane_->hide(); dragon_->hide();
-            house_->show();
-        }
-    });
+    connect(ui_->tabWidget, &QTabWidget::tabBarClicked, this, &MainWindow::changePictureOnTab);
 
 
     {
@@ -134,7 +113,8 @@ MainWindow::MainWindow(QWidget *parent) :
     scene_->addItem(bLemniscat_); bLemniscat_->hide();
     scene_->addItem(plane_); plane_->hide();
     scene_->addItem(dragon_); dragon_->hide();
-    scene_->addItem(house_);
+    scene_->addItem(house_); house_->hide();
+    scene_->addItem(hyperboloid_);
     update3dTransform();
 
 
@@ -227,6 +207,35 @@ void MainWindow::update3dTransform()
     transformation3d_.setRotationAngles({alpha, betta, gamma});
 
     redraw();
+}
+
+void MainWindow::changePictureOnTab(int index)
+{
+    if (index == 0) {
+        bLemniscat_->hide(); plane_->hide();
+        dragon_->hide(); house_->hide(); hyperboloid_->hide();
+        gasket_->show();
+    } else if(index == 1){
+        gasket_->hide(); plane_->hide();
+        dragon_->hide(); house_->hide(); hyperboloid_->hide();
+        bLemniscat_->show();
+    } else if(index == 2){
+        gasket_->hide(); bLemniscat_->hide();
+        dragon_->hide(); house_->hide(); hyperboloid_->hide();
+        plane_->show();
+    } else if(index == 3){
+        gasket_->hide(); bLemniscat_->hide();
+        plane_->hide(); house_->hide(); hyperboloid_->hide();
+        dragon_->show();
+    } else if(index == 4){
+        gasket_->hide(); bLemniscat_->hide();
+        plane_->hide(); dragon_->hide(); hyperboloid_->hide();
+        house_->show();
+    } else if(index == 5){
+        gasket_->hide(); bLemniscat_->hide();
+        plane_->hide(); dragon_->hide(); house_->hide();
+        hyperboloid_->show();
+    }
 }
 
 MainWindow::~MainWindow()
