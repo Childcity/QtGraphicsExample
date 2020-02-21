@@ -238,6 +238,14 @@ void MainWindow::changePictureOnTab(int index)
     }
 }
 
+void MainWindow::on_pushButton_3_clicked()
+{
+    ui_->spinBox_15->setValue(0);
+    ui_->spinBox_16->setValue(0);
+    ui_->spinBox_17->setValue(0);
+    update3dTransform();
+}
+
 MainWindow::~MainWindow()
 {
     delete ui_;

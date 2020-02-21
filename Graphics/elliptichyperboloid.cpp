@@ -1,10 +1,12 @@
 #include "elliptichyperboloid.h"
+#include "plane.h"
 
 #include <QPainter>
 #include <QPen>
 #include <QDebug>
 
 #include <cmath>
+#include <algorithm>
 
 void EllipticHyperboloid::redraw()
 {
@@ -17,6 +19,11 @@ EllipticHyperboloid::EllipticHyperboloid(QChart *chart, Transformation2D *transf
     , transformation3d_(transformation3d)
 {
     genHyperboloid();
+
+    Plane plane(chart, transformation2d);
+    for (const auto &point : plane.getTriangles()) {
+        texture_.emplace_back(point->pos());
+    }
 }
 
 QRectF EllipticHyperboloid::boundingRect() const
@@ -44,11 +51,12 @@ void EllipticHyperboloid::paint(QPainter *painter, const QStyleOptionGraphicsIte
 
     QPoint pinnedPoint = boundingRect().center().toPoint();
     vector<vector<QPointF>> elipses2d;
-    QPainterPath mesh;
+    QPainterPath meshPath;
+    QPainterPath texturePath;
 
 
     // construct elipses
-    for(const auto &elips : elipses_){
+    for (const auto &elips : elipses_) {
         vector<QPointF> elips2d =
                 transformation3d_
                 ->setToIdentity()
@@ -57,31 +65,61 @@ void EllipticHyperboloid::paint(QPainter *painter, const QStyleOptionGraphicsIte
                 .mapTo2d(elips);
         elipses2d.emplace_back(elips2d);
 
-        mesh.moveTo(elips2d.front());
-        for(const auto &p : elips2d){
-            mesh.lineTo(p);
+        meshPath.moveTo(elips2d.front());
+        for (const auto &p : elips2d) {
+            meshPath.lineTo(p);
         }
-        mesh.closeSubpath();
+        meshPath.closeSubpath();
     }
+
+    const size_t pointsCount = elipses2d.front().size();
+    const size_t elipsesCount = elipses2d.size();
 
     // construct parabolas
-    for (size_t elipsPointId = 0; elipsPointId < elipses2d.front().size(); ++elipsPointId) {
-        mesh.moveTo(elipses2d[0][elipsPointId]);
-        for (size_t elipsId = 0; elipsId < elipses2d.size(); ++elipsId) {
-            mesh.quadTo(elipses2d[elipsId][elipsPointId]+QPointF(2,2), elipses2d[elipsId][elipsPointId]);
+    for (size_t elipsPointId = 0; elipsPointId < pointsCount; ++elipsPointId) {
+        meshPath.moveTo(elipses2d[0][elipsPointId]);
+        for (size_t elipsId = 0; elipsId < elipsesCount; ++elipsId) {
+            meshPath.lineTo(elipses2d[elipsId][elipsPointId]);
         }
     }
 
+
+    // construct Plane points on elliptic hyperboloid
+
+    const float textureBorderX = std::max_element(texture_.cbegin(), texture_.cend(), [&](const QVector2D l, const QVector2D r){
+        return l.x() < r.x();
+    })->x();
+    const float textureBorderY = std::max_element(texture_.cbegin(), texture_.cend(), [&](const QVector2D l, const QVector2D r){
+        return l.y() < r.y();
+    })->y();
+
+    const float xCoefficient = pointsCount / textureBorderX;
+    const float yCoefficient = elipsesCount / textureBorderY;
+
+
+    for (const auto &p : texture_) {
+        auto pp = QPointF{p.x(), p.y()};
+        for (size_t elipsPointId = 0; elipsPointId < pointsCount; ++elipsPointId) {
+            for (size_t elipsId = 0; elipsId < elipsesCount; ++elipsId) {
+                auto eh = elipses2d[elipsId][elipsPointId];
+                if(std::abs((pp - eh).x()) < 1 && std::abs((pp - eh).y()) < 1)
+                {
+                    if(texturePath.elementCount()==0)
+                        texturePath.moveTo(elipses2d[elipsId][elipsPointId]);
+                    else
+                        texturePath.lineTo(elipses2d[elipsId][elipsPointId]);
+                }
+            }
+        }
+    }
+
+    texturePath.closeSubpath();
+
     painter->setPen(QPen(Qt::black, 2));
-    painter->drawPath(mesh);
+    painter->drawPath(meshPath);
+    painter->setPen(QPen(Qt::red, 1));
+    painter->drawPath(texturePath);
 
-//    for (const auto &p : points2d) {
-//        painter->drawEllipse(p,5,5);
-//    }
-
-    //painter->drawLines(points2d.data(), points2d.size()/2);
-
-    //painter->drawRect(boundingRect());
     transformateDatail();
 }
 
@@ -95,9 +133,9 @@ void EllipticHyperboloid::genHyperboloid()
 {
     float a = 1, b = 1, c = 1;
 
-    for (float V = -6.; V <= 6.f; V+=0.5) {
+    for (float V = -6.; V <= 6.f; V+=meshStep_) {
         vector<QVector3D> elips;
-        for (float U = 0.; U <= PI2; U+=0.5) {
+        for (float U = 0.; U <= PI2; U+=meshStep_) {
             elips.emplace_back(QVector3D{
                                      a * coshf(V) * cosf(U),
                                      b * coshf(V) * sinf(U),

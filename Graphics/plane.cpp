@@ -124,6 +124,11 @@ void Plane::setTrianglesVisible(bool isTrianglesVisible)
     //    }
 }
 
+QVector<MovablePoint *> Plane::getTriangles() const
+{
+    return triangles_;
+}
+
 void Plane::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     GraphicsItemBase::paint(painter, option, widget);

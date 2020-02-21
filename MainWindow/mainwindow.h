@@ -33,6 +33,9 @@ protected:
 
     void resizeEvent(QResizeEvent* event) override;
 
+private slots:
+    void on_pushButton_3_clicked();
+
 private:
     void redraw();
 

@@ -16,9 +16,10 @@ private:
     constexpr static float PI2 = static_cast<float>(2.*M_PI);
 
     vector<vector<QVector3D>> elipses_;
+    vector<QVector2D> texture_;
 
     Transformation3D *transformation3d_;
-
+    float meshStep_ = 0.1f;
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;

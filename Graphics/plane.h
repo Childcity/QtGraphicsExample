@@ -16,7 +16,7 @@ private:
     constexpr static int animationFrameCount_ = 50;
 
     bool isTrianglesVisible_ = true;
-    QList<MovablePoint *> triangles_;
+    QVector<MovablePoint *> triangles_;
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
@@ -34,6 +34,8 @@ public:
     void animateTo(QString figureFilePath, bool isForwardAnimation);
 
     void setTrianglesVisible(bool isTrianglesVisible);
+
+    QVector<MovablePoint *> getTriangles() const;
 
 private:
     void transformateDatail() override;
