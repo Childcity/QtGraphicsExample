@@ -43,18 +43,43 @@ void EllipticHyperboloid::paint(QPainter *painter, const QStyleOptionGraphicsIte
     GraphicsItemBase::paint(painter, option, widget);
 
     QPoint pinnedPoint = boundingRect().center().toPoint();
+    vector<vector<QPointF>> elipses2d;
+    QPainterPath mesh;
 
-    vector<QPointF> points2d =
-            transformation3d_
-            ->setToIdentity()
-            .translate(QVector3D(pinnedPoint.x(), pinnedPoint.y(), 0))
-            .rotate()
-            .mapTo2d(points_);
 
-    painter->setPen(QPen(Qt::red, 1));
-    for (const auto &p : points2d) {
-        painter->drawEllipse(p,5,5);
+    // construct elipses
+    for(const auto &elips : elipses_){
+        vector<QPointF> elips2d =
+                transformation3d_
+                ->setToIdentity()
+                .translate(QVector3D(pinnedPoint.x(), pinnedPoint.y(), 0))
+                .rotate()
+                .mapTo2d(elips);
+        elipses2d.emplace_back(elips2d);
+
+        mesh.moveTo(elips2d.front());
+        for(const auto &p : elips2d){
+            mesh.lineTo(p);
+        }
+        mesh.closeSubpath();
     }
+
+    // construct parabolas
+    for (size_t elipsPointId = 0; elipsPointId < elipses2d.front().size(); ++elipsPointId) {
+        mesh.moveTo(elipses2d[0][elipsPointId]);
+        for (size_t elipsId = 0; elipsId < elipses2d.size(); ++elipsId) {
+            mesh.quadTo(elipses2d[elipsId][elipsPointId]+QPointF(2,2), elipses2d[elipsId][elipsPointId]);
+        }
+    }
+
+    painter->setPen(QPen(Qt::black, 2));
+    painter->drawPath(mesh);
+
+//    for (const auto &p : points2d) {
+//        painter->drawEllipse(p,5,5);
+//    }
+
+    //painter->drawLines(points2d.data(), points2d.size()/2);
 
     //painter->drawRect(boundingRect());
     transformateDatail();
@@ -68,16 +93,19 @@ void EllipticHyperboloid::transformateDatail()
 
 void EllipticHyperboloid::genHyperboloid()
 {
-    float a = 1, b = 2, c = 3;
+    float a = 1, b = 1, c = 1;
 
-    for (double V = -6.; V <= 6.; V+=0.5) {
-        for (double U = 0.; U <= 2.*M_PI; U+=0.5) {
-            points_.emplace_back(QVector3D{
+    for (float V = -6.; V <= 6.f; V+=0.5) {
+        vector<QVector3D> elips;
+        for (float U = 0.; U <= PI2; U+=0.5) {
+            elips.emplace_back(QVector3D{
                                      a * coshf(V) * cosf(U),
                                      b * coshf(V) * sinf(U),
                                      c * sinhf(V)
                                  });
+            elips.emplace_back(elips.back());
         }
+        elipses_.emplace_back(elips);
     }
 }
 

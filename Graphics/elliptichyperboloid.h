@@ -6,18 +6,19 @@
 #include "Basic/transformation3d.h"
 
 #include <QChart>
-#include <exception>
+#include <vector>
 
 using std::vector;
-using std::list;
-using std::pair;
 using namespace QtCharts;
 
 class EllipticHyperboloid: public GraphicsItemBase {
 private:
-    vector<QVector3D> points_;
+    constexpr static float PI2 = static_cast<float>(2.*M_PI);
+
+    vector<vector<QVector3D>> elipses_;
 
     Transformation3D *transformation3d_;
+
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
