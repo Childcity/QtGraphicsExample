@@ -16,6 +16,8 @@ using namespace QtCharts;
 
 class HauseInDimetricProection: public GraphicsItemBase {
 private:
+    Transformation3D *transformation3d_;
+
     vector<QVector3D> points_ {
         {
             /*0*/   {200, 350, 350}, {400, 350, 350}, {400, 200, 350},
@@ -42,8 +44,6 @@ private:
         {10, 11}, {12, 13}, {11, 13}, {10, 12}, // connect door
         {14, 15}, {16, 17}, {14, 16}, {15, 17} // connect window
     };
-
-    Transformation3D *transformation3d_;
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;

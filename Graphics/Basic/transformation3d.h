@@ -86,6 +86,12 @@ public:
         return *this;
     }
 
+    Transformation3D &scale(const QVector3D &scale)
+    {
+        proection_.scale(scale);
+        return *this;
+    }
+
     std::vector<QPointF> mapTo2d(const std::vector<QVector3D> &points3d) const
     {
         std::vector<QPointF> mapped;

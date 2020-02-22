@@ -39,9 +39,17 @@ private slots:
 private:
     void redraw();
 
-    void update3dTransform();
+    void update3dTransformation();
 
     void changePictureOnTab(int index);
+
+    void connectAllSignalsSlots();
+
+    void setupChart();
+
+    void setup2dRotatePoint();
+
+    void setupTransformationConrolPoints();
 
 private:
     Ui::MainWindow *ui_;

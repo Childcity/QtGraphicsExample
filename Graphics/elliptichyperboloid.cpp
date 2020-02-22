@@ -12,18 +12,23 @@ void EllipticHyperboloid::redraw()
 {
     GraphicsItemBase::redraw();
     update();
+
+    genHyperboloid();
+    refrashPictureData();
 }
 
 EllipticHyperboloid::EllipticHyperboloid(QChart *chart, Transformation2D *transformation2d, Transformation3D *transformation3d)
     : GraphicsItemBase (chart, transformation2d)
     , transformation3d_(transformation3d)
 {
-    genHyperboloid();
-
     Plane plane(chart, transformation2d);
+    //const auto &planeTriangles = plane.getTriangles();
     for (const auto &point : plane.getTriangles()) {
-        texture_.emplace_back(point->pos());
+        texture_.emplace_back(point->pos() + QPointF(0, 39) /*+ QPointF(200,200)*/);
     }
+
+    textureMaxX_ = std::max_element(texture_.cbegin(), texture_.cend(), maxComparator)->x();
+    textureMaxY_ = std::max_element(texture_.cbegin(), texture_.cend(), maxComparator)->y();
 }
 
 QRectF EllipticHyperboloid::boundingRect() const
@@ -39,86 +44,76 @@ QRectF EllipticHyperboloid::boundingRect() const
                ? affineXYDelta.y()*k
                : 0);
 
-    return QRectF(160 + xDelta
-                  , 0 - 150 - yDelta
-                  , 500
-                  , 500);
+    return QRectF(0 + xDelta
+                  , 0 - 300 - yDelta
+                  , 700
+                  , 700);
+}
+
+float EllipticHyperboloid::getMeshStep() const
+{
+    return meshStep_;
+}
+
+void EllipticHyperboloid::setMeshStep(float meshStep)
+{
+    meshStep_ = meshStep;
+}
+
+QVector3D EllipticHyperboloid::getAbc() const
+{
+    return abc_;
+}
+
+void EllipticHyperboloid::setAbc(const QVector3D &abc)
+{
+    abc_ = abc;
+}
+
+void EllipticHyperboloid::setA(float a)
+{
+    abc_.setX(a);
+}
+
+void EllipticHyperboloid::setB(float b)
+{
+    abc_.setY(b);
+}
+
+void EllipticHyperboloid::setC(float c)
+{
+    abc_.setZ(c);
+}
+
+QPointF EllipticHyperboloid::getTextureTranslatePoint() const
+{
+    return textureTranslatePoint_;
+}
+
+void EllipticHyperboloid::setTextureTranslatePoint(const QPointF &textureTranslatePoint)
+{
+    textureTranslatePoint_ = textureTranslatePoint;
+}
+
+void EllipticHyperboloid::setTextureTranslatePointX(double x)
+{
+    textureTranslatePoint_.rx() = x;
+}
+
+void EllipticHyperboloid::setTextureTranslatePointY(double y)
+{
+    textureTranslatePoint_.ry() = y;
 }
 
 void EllipticHyperboloid::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     GraphicsItemBase::paint(painter, option, widget);
 
-    QPoint pinnedPoint = boundingRect().center().toPoint();
-    vector<vector<QPointF>> elipses2d;
-    QPainterPath meshPath;
-    QPainterPath texturePath;
+    painter->setPen(QPen(Qt::black, 0.3));
+    painter->drawPath(meshPath_);
 
-
-    // construct elipses
-    for (const auto &elips : elipses_) {
-        vector<QPointF> elips2d =
-                transformation3d_
-                ->setToIdentity()
-                .translate(QVector3D(pinnedPoint.x(), pinnedPoint.y(), 0))
-                .rotate()
-                .mapTo2d(elips);
-        elipses2d.emplace_back(elips2d);
-
-        meshPath.moveTo(elips2d.front());
-        for (const auto &p : elips2d) {
-            meshPath.lineTo(p);
-        }
-        meshPath.closeSubpath();
-    }
-
-    const size_t pointsCount = elipses2d.front().size();
-    const size_t elipsesCount = elipses2d.size();
-
-    // construct parabolas
-    for (size_t elipsPointId = 0; elipsPointId < pointsCount; ++elipsPointId) {
-        meshPath.moveTo(elipses2d[0][elipsPointId]);
-        for (size_t elipsId = 0; elipsId < elipsesCount; ++elipsId) {
-            meshPath.lineTo(elipses2d[elipsId][elipsPointId]);
-        }
-    }
-
-
-    // construct Plane points on elliptic hyperboloid
-
-    const float textureBorderX = std::max_element(texture_.cbegin(), texture_.cend(), [&](const QVector2D l, const QVector2D r){
-        return l.x() < r.x();
-    })->x();
-    const float textureBorderY = std::max_element(texture_.cbegin(), texture_.cend(), [&](const QVector2D l, const QVector2D r){
-        return l.y() < r.y();
-    })->y();
-
-    const float xCoefficient = pointsCount / textureBorderX;
-    const float yCoefficient = elipsesCount / textureBorderY;
-
-
-    for (const auto &p : texture_) {
-        auto pp = QPointF{p.x(), p.y()};
-        for (size_t elipsPointId = 0; elipsPointId < pointsCount; ++elipsPointId) {
-            for (size_t elipsId = 0; elipsId < elipsesCount; ++elipsId) {
-                auto eh = elipses2d[elipsId][elipsPointId];
-                if(std::abs((pp - eh).x()) < 1 && std::abs((pp - eh).y()) < 1)
-                {
-                    if(texturePath.elementCount()==0)
-                        texturePath.moveTo(elipses2d[elipsId][elipsPointId]);
-                    else
-                        texturePath.lineTo(elipses2d[elipsId][elipsPointId]);
-                }
-            }
-        }
-    }
-
-    texturePath.closeSubpath();
-
-    painter->setPen(QPen(Qt::black, 2));
-    painter->drawPath(meshPath);
-    painter->setPen(QPen(Qt::red, 1));
-    painter->drawPath(texturePath);
+    painter->setPen(QPen(Qt::red, 2));
+    painter->drawPath(texturePath_);
 
     transformateDatail();
 }
@@ -131,19 +126,111 @@ void EllipticHyperboloid::transformateDatail()
 
 void EllipticHyperboloid::genHyperboloid()
 {
-    float a = 1, b = 1, c = 1;
+    elipses_.clear();
 
-    for (float V = -6.; V <= 6.f; V+=meshStep_) {
+    for (float V = -5.7f; V <= 5.7f; V+=meshStep_) {
         vector<QVector3D> elips;
         for (float U = 0.; U <= PI2; U+=meshStep_) {
             elips.emplace_back(QVector3D{
-                                     a * coshf(V) * cosf(U),
-                                     b * coshf(V) * sinf(U),
-                                     c * sinhf(V)
+                                     abc_.x() * coshf(V) * cosf(U),
+                                     abc_.y() * coshf(V) * sinf(U),
+                                     abc_.z() * sinhf(V)
                                  });
             elips.emplace_back(elips.back());
         }
         elipses_.emplace_back(elips);
     }
+}
+
+void EllipticHyperboloid::refrashPictureData()
+{
+    meshPath_ = texturePath_ = QPainterPath();
+
+    QPoint pinnedPoint = boundingRect().center().toPoint();
+    vector<vector<QPointF>> elipses2d;
+
+
+    // construct elipses
+    for (const auto &elips : elipses_) {
+        vector<QPointF> elips2d =
+                transformation3d_
+                ->setToIdentity()
+                .translate(QVector3D(pinnedPoint.x(), pinnedPoint.y(), 0))
+                .rotate()
+                .mapTo2d(elips);
+        elipses2d.emplace_back(std::move(elips2d));
+
+        meshPath_.moveTo(elipses2d.back().front());
+        for (const auto &p : elipses2d.back()) {
+            meshPath_.lineTo(p);
+        }
+        meshPath_.closeSubpath();
+    }
+
+    const size_t pointsCount = elipses2d.front().size();
+    const size_t elipsesCount = elipses2d.size();
+
+    // construct parabolas
+    for (size_t elipsPointId = 0; elipsPointId < pointsCount; ++elipsPointId) {
+        meshPath_.moveTo(elipses2d[0][elipsPointId]);
+        for (size_t elipsId = 0; elipsId < elipsesCount; ++elipsId) {
+            meshPath_.lineTo(elipses2d[elipsId][elipsPointId]);
+        }
+    }
+
+
+    // construct texture points on elliptic hyperboloid
+
+    // textureMaxX_   = 100%
+    // pX             = ((100% * pX) / textureMaxX_)
+    //
+    // * Find mapped_p on pointsCount *
+    //
+    // pointsCount  = 100%
+    // mappedPX     = ((100% * pX) / textureMaxX_) * (pointsCount / 100%)
+    //                 ||
+    //                 \/
+    //              xCoefficient = (elipsesCount-1) / textureMaxX_
+
+    #define to_size(var) static_cast<size_t>((var)) /* cast to size_t */
+
+    const double xCoefficient = (elipsesCount-1) / textureMaxX_ * 0.1;
+    const double yCoefficient = (pointsCount-1) / textureMaxY_ * 0.1;
+
+    // move texture by x and y
+    QTransform textureTransformer;
+    textureTransformer.translate(textureTranslatePoint_.x(), textureTranslatePoint_.y());
+
+    size_t mpX_ctrlP, mpX1_endP;
+    size_t mpY_ctrlP, mpY1_endP;
+
+    for (size_t i = 0; i < texture_.size() - 1; i += 2) {
+        //QVector2D &stP = texture_[i+0]; not used here...
+        QPointF ctrlP = textureTransformer.map(texture_[i+1]);
+        QPointF endP = textureTransformer.map(texture_[i+2]);
+
+        mpX_ctrlP = to_size(ctrlP.x() * xCoefficient);
+        mpY_ctrlP = to_size(ctrlP.y() * yCoefficient);
+
+        mpX1_endP = to_size(endP.x() * xCoefficient);
+        mpY1_endP = to_size(endP.y() * yCoefficient);
+
+        if(mpX_ctrlP >= elipsesCount || mpY_ctrlP >= pointsCount || mpX1_endP >= elipsesCount || mpY1_endP >= pointsCount)
+            continue;
+
+        // add Bezie curve from currentPosition() to endP, that mapped to Elliptic Hyperboloid
+        if (texturePath_.elementCount() == 0) {
+            texturePath_.moveTo(elipses2d[mpX1_endP][mpY1_endP]);
+        } else {
+            texturePath_.quadTo(elipses2d[mpX_ctrlP][mpY_ctrlP],
+                               elipses2d[mpX1_endP][mpY1_endP]);
+            //texturePath_.addEllipse(elipses2d[mpX1_endP][mpY1_endP], 3, 3);
+        }
+    }
+    texturePath_.closeSubpath();
+}
+
+double EllipticHyperboloid::maxComparator(const QPointF &l, const QPointF &r){
+    return l.y() < r.y();
 }
 
