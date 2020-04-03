@@ -58,8 +58,6 @@ public:
 private:
     void transformateDatail() override;
 
-    void genHouse();
-
 };
 
 #endif // HauseInDimetricProection_H

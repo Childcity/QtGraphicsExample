@@ -68,8 +68,3 @@ void HauseInDimetricProection::transformateDatail()
     setTransform(transformation2d_->getTransformation().first);
 }
 
-void HauseInDimetricProection::genHouse()
-{
-
-}
-
