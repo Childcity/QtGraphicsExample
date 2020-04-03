@@ -44,7 +44,7 @@ void GraphicsItemBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *
         //auto chartRect = mapRectFromItem(chart_, chart_->scene()->sceneRect());
         //painter->drawEllipse(QRectF(chartRect.topRight().x()-10, chartRect.topRight().y(), 10, 10));
         //painter->drawEllipse(QRectF(chartRect.bottomLeft().x(), chartRect.bottomLeft().y()-10, 10, 10));
-        painter->drawRect(mapRectFromItem(chart_, chart_->boundingRect()));
+       // painter->drawRect(mapRectFromItem(chart_, chart_->boundingRect()));
     }
     painter->restore();
 
