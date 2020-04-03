@@ -65,38 +65,51 @@ void Transformation2D::setAffineSystemWeight(float weight, int i)
     affineSystemPoints_[i].first = weight;
 }
 
+QPointF Transformation2D::getTranslationPoint() const
+{
+    return translationPoint_;
+}
+
+void Transformation2D::setTranslationPoint(const QPointF &translationPoint)
+{
+    translationPoint_ = translationPoint;
+}
+
 QPair<QTransform, QTransform> Transformation2D::getTransformation() const
 {
     QTransform transformMatrix;
 
+    transformMatrix.translate(translationPoint_.x(), translationPoint_.y());
+
     {
-        float a    = static_cast<float>(M_PI/180. * rotateAncle_);
-        float sina = sinf(a);
-        float cosa = cosf(a);
-        float centerX = static_cast<float>(rotatePoint_.x());
-        float centerY = static_cast<float>(rotatePoint_.y());
+        const float a    = static_cast<float>(M_PI/180. * rotateAncle_);
+        const float sina = sinf(a);
+        const float cosa = cosf(a);
+        const float centerX = static_cast<float>(rotatePoint_.x());
+        const float centerY = static_cast<float>(rotatePoint_.y());
 
         // rotate about Z and translate
-        QMatrix4x4 transformationMatrix = QMatrix4x4(cosa,   sina,   0,    centerX - cosa*centerX - sina*centerY,
-                                                     -sina,   cosa,   0,   centerY - -sina*centerX - cosa*centerY,
-                                                     0,       0,     1,   0,
-                                                     0,       0,     0,   1);
+        QMatrix4x4 transformationMatrix;
+        transformationMatrix = QMatrix4x4(cosa,   sina,   0,    centerX - cosa*centerX - sina*centerY,
+                                         -sina,   cosa,   0,   centerY - -sina*centerX - cosa*centerY,
+                                         0,       0,     1,   0,
+                                         0,       0,     0,   1);
 
-        transformMatrix = transformationMatrix.toTransform();
+        transformMatrix *= transformationMatrix.toTransform();
     }
 
     if(isProectiveEnabled_){
-        double Xy = affineSystemPoints_[0].second.x();
-        double Yy = affineSystemPoints_[0].second.y();
-        double Wy = static_cast<double>(affineSystemPoints_[0].first);
+        const double Xy = affineSystemPoints_[0].second.x();
+        const double Yy = affineSystemPoints_[0].second.y();
+        const double Wy = static_cast<double>(affineSystemPoints_[0].first);
 
-        double X0 = affineSystemPoints_[1].second.x();
-        double Y0 = affineSystemPoints_[1].second.y();
-        double W0 = static_cast<double>(affineSystemPoints_[1].first);
+        const double X0 = affineSystemPoints_[1].second.x();
+        const double Y0 = affineSystemPoints_[1].second.y();
+        const double W0 = static_cast<double>(affineSystemPoints_[1].first);
 
-        double Xx = affineSystemPoints_[2].second.x();
-        double Yx = affineSystemPoints_[2].second.y();
-        double Wx = static_cast<double>(affineSystemPoints_[2].first);
+        const double Xx = affineSystemPoints_[2].second.x();
+        const double Yx = affineSystemPoints_[2].second.y();
+        const double Wx = static_cast<double>(affineSystemPoints_[2].first);
 
         const auto proectiveT = QTransform(Xx*Wx,    Yx*Wx,          Wx,
                                            Xy*Wy,    Yy*Wy,          Wy,
@@ -109,15 +122,14 @@ QPair<QTransform, QTransform> Transformation2D::getTransformation() const
     }
 
     if(isAffineEnabled_){
-        double Xy = affineSystemPoints_[0].second.x()/300;
-        double Yy = affineSystemPoints_[0].second.y()/300;
+        const double Xy = affineSystemPoints_[0].second.x()/300;
+        const double Yy = affineSystemPoints_[0].second.y()/300;
 
-        double X0 = affineSystemPoints_[1].second.x()/1000;
-        double Y0 = affineSystemPoints_[1].second.y()/1000;
+        const double X0 = affineSystemPoints_[1].second.x()/1000;
+        const double Y0 = affineSystemPoints_[1].second.y()/1000;
 
-
-        double Xx = affineSystemPoints_[2].second.x()/300;
-        double Yx = affineSystemPoints_[2].second.y()/300;
+        const double Xx = affineSystemPoints_[2].second.x()/300;
+        const double Yx = affineSystemPoints_[2].second.y()/300;
 
         const auto affineT = QTransform(Xx,    Yx,          0,
                                         Xy,    Yy,          0,

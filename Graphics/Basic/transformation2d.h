@@ -17,6 +17,8 @@ class Transformation2D {
     double rotateAncle_ = 0;
     QPointF rotatePoint_;
 
+    QPointF translationPoint_;
+
     // Affine
     bool isAffineEnabled_ = false;
     bool isProectiveEnabled_ = false;
@@ -42,6 +44,9 @@ public:
 
     QPointF getRotatePoint() const;
     void setRotatePoint(const QPointF &rotatePoint);
+
+    QPointF getTranslationPoint() const;
+    void setTranslationPoint(const QPointF &translationPoint);
 
     bool isAffineEnabled() const;
     void setAffineEnabled(bool isAffineEnabled);
