@@ -79,8 +79,6 @@ QPair<QTransform, QTransform> Transformation2D::getTransformation() const
 {
     QTransform transformMatrix;
 
-    transformMatrix.translate(translationPoint_.x(), translationPoint_.y());
-
     {
         const float a    = static_cast<float>(M_PI/180. * rotateAncle_);
         const float sina = sinf(a);
@@ -97,6 +95,8 @@ QPair<QTransform, QTransform> Transformation2D::getTransformation() const
 
         transformMatrix *= transformationMatrix.toTransform();
     }
+
+    transformMatrix *= QTransform().translate(translationPoint_.x(), translationPoint_.y());
 
     if(isProectiveEnabled_){
         const double Xy = affineSystemPoints_[0].second.x();

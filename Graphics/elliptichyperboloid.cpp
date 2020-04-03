@@ -203,18 +203,13 @@ void EllipticHyperboloid::refrashPictureData()
     const double yCoefficient = (pointsCount-1) / textureMaxY_ * 0.1;
 
 
-
     QTransform textureTransformer;
 
-    // move texture by x and y
-    textureTransformer.translate(textureTranslatePoint_.x(), textureTranslatePoint_.y());
-
     {
-        // rotate texture around its first point
         Transformation2D transformer2d;
-        //transformer2d.setTranslationPoint(textureTranslatePoint_); // move texture by x and y
-        transformer2d.setRotateAncle(textureRotateAncle_);
-        transformer2d.setRotatePoint(textureTransformer.map(texture_[0]));
+        transformer2d.setTranslationPoint(textureTranslatePoint_); // move texture by x and y
+        transformer2d.setRotateAncle(textureRotateAncle_);                 // rotate texture
+        transformer2d.setRotatePoint(textureTransformer.map(texture_[0])); // around its first point
         textureTransformer *= transformer2d.getTransformation().first;
     }
 
