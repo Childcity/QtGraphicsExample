@@ -21,6 +21,7 @@ private:
     vector<QPointF> texture_;
     double textureMaxX_;
     double textureMaxY_;
+    double textureRotateAncle_;
 
     // Picture pathes
     QPainterPath meshPath_;
@@ -29,7 +30,7 @@ private:
     // EllipticHyperboloid parameters
     float meshStep_ = 0.05f;
     QVector3D abc_ = {2, 2, 2};
-    QPointF textureTranslatePoint_ = {-100, 500};
+    QPointF textureTranslatePoint_ = {-100, 600};
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
@@ -54,6 +55,8 @@ public:
     void setTextureTranslatePoint(const QPointF &textureTranslatePoint);
     void setTextureTranslatePointX(double x);
     void setTextureTranslatePointY(double y);
+
+    void setTextureRotateAncle(double textureRotateAncle);
 
 private:
     void transformateDatail() override;

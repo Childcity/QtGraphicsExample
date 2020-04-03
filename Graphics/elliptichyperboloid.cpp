@@ -22,9 +22,9 @@ EllipticHyperboloid::EllipticHyperboloid(QChart *chart, Transformation2D *transf
     , transformation3d_(transformation3d)
 {
     Plane plane(chart, transformation2d);
-    //const auto &planeTriangles = plane.getTriangles();
+
     for (const auto &point : plane.getTriangles()) {
-        texture_.emplace_back(point->pos() + QPointF(0, 39) /*+ QPointF(200,200)*/);
+        texture_.emplace_back(point->pos() + QPointF(0, 39));
     }
 
     textureMaxX_ = std::max_element(texture_.cbegin(), texture_.cend(), maxComparator)->x();
@@ -103,6 +103,11 @@ void EllipticHyperboloid::setTextureTranslatePointX(double x)
 void EllipticHyperboloid::setTextureTranslatePointY(double y)
 {
     textureTranslatePoint_.ry() = y;
+}
+
+void EllipticHyperboloid::setTextureRotateAncle(double textureRotateAncle)
+{
+    textureRotateAncle_ = textureRotateAncle;
 }
 
 void EllipticHyperboloid::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -197,9 +202,21 @@ void EllipticHyperboloid::refrashPictureData()
     const double xCoefficient = (elipsesCount-1) / textureMaxX_ * 0.1;
     const double yCoefficient = (pointsCount-1) / textureMaxY_ * 0.1;
 
-    // move texture by x and y
+
+
     QTransform textureTransformer;
+
+    // move texture by x and y
     textureTransformer.translate(textureTranslatePoint_.x(), textureTranslatePoint_.y());
+
+    {
+        // rotate texture around its first point
+        Transformation2D transformer2d;
+        //transformer2d.setTranslationPoint(textureTranslatePoint_); // move texture by x and y
+        transformer2d.setRotateAncle(textureRotateAncle_);
+        transformer2d.setRotatePoint(textureTransformer.map(texture_[0]));
+        textureTransformer *= transformer2d.getTransformation().first;
+    }
 
     size_t mpX_ctrlP, mpX1_endP;
     size_t mpY_ctrlP, mpY1_endP;

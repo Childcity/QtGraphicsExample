@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui_->setupUi(this);
     ui_->tabWidget->setCurrentIndex(5);
-    //setStyleSheet("font: 10pt 'Ubuntu';font-style: normal;");
+    setStyleSheet("font: 10pt 'Ubuntu';font-style: normal;");
 
     setupChart();
 
@@ -165,12 +165,14 @@ void MainWindow::connectAllSignalsSlots()
     }
 
     {
+        // Hyperboloid conections
         connect(ui_->spinBox_18, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ hyperboloid_->setMeshStep(1./value); redraw();  });
         connect(ui_->spinBox_19, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ hyperboloid_->setA(value/10.); redraw();  });
         connect(ui_->spinBox_20, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ hyperboloid_->setB(value/10.); redraw();  });
         connect(ui_->spinBox_21, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ hyperboloid_->setC(value/10.); redraw();  });
         connect(ui_->spinBox_22, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ hyperboloid_->setTextureTranslatePointX(value); redraw();  });
         connect(ui_->spinBox_23, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ hyperboloid_->setTextureTranslatePointY(value); redraw();  });
+        connect(ui_->spinBox_24, QOverload<int>::of(&QSpinBox::valueChanged), this, [=](int value){ hyperboloid_->setTextureRotateAncle(value); redraw();  });
     }
 
     {
