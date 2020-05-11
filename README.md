@@ -1,6 +1,9 @@
 ## QtGraphicsExample
 Working with 2D modeling, using qt
 
+### Eliptic Hyperboloid and Bézier curve on it
+![House](./docs/Animation/ElipticHyperboloid.gif)
+
 ### Gasket and Proective transformation
 ![Gasket_Proective](./docs/Gasket_Proective.png)
 
@@ -20,7 +23,4 @@ Working with 2D modeling, using qt
 
 ### Hause in Dimetric proection
 ![House](./docs/HouseDimtricProection.png)
-
-### Eliptic Hyperboloid and Bézier curve on it
-![House](./docs/Animation/ElipticHyperboloid.gif)
 
