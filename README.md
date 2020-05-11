@@ -17,3 +17,10 @@ Working with 2D modeling, using qt
 ![Palane_BezueCurve](./docs/Animation/PlaneToCatAnimation.gif)
 ![Palane_BezueCurve](./docs/Animation/BezieMove.gif)
 ![Palane_BezueCurve](./docs/Animation/PlaneToCat.gif)
+
+### Hause in Dimetric proection
+![House](./docs/HouseDimtricProection.png)
+
+### Eliptic Hyperboloid and Bézier curve on it
+![House](./docs/Animation/ElipticHyperboloid.gif)
+
